@@ -54,6 +54,8 @@ final class TrackersUserDefaultsStorage: TrackersStorageProtocol {
         }
     }
 
+    private init() {   }
+
     func save(trackers: [TrackerCategory]) {
         do {
             let encoder = JSONEncoder()
@@ -65,7 +67,7 @@ final class TrackersUserDefaultsStorage: TrackersStorageProtocol {
     }
 
     func loadTrackers() -> [TrackerCategory]? {
-        trackers
+        return trackers
     }
 
     func save(trackerRecords: Set<TrackerRecord>) {
@@ -79,7 +81,7 @@ final class TrackersUserDefaultsStorage: TrackersStorageProtocol {
     }
 
     func loadTrackerRecords() -> Set<TrackerRecord>? {
-        trackerRecords
+        return trackerRecords
     }
 }
 

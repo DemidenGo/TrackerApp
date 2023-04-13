@@ -106,13 +106,21 @@ final class CategoriesViewController: UIViewController {
             self.selectedCategoryName = newCategoryName
             if !self.isNewCategory {
                 self.setCell(state: .checked)
+                self.dismissWithCallback()
                 return
             }
             self.appendNewCategory(name: newCategoryName)
             self.updateTableView()
             self.setCell(state: .checked)
+            self.dismissWithCallback()
         }
         present(newCategoryViewController, animated: true)
+    }
+
+    private func dismissWithCallback() {
+        dismiss(animated: true) { [weak self] in
+            self?.callback?(self?.categories, self?.selectedCategoryIndex)
+        }
     }
 
     private func appendNewCategory(name: String) {
@@ -184,10 +192,7 @@ extension CategoriesViewController: UITableViewDelegate {
         setCell(state: .unchecked)
         selectedCategoryName = categories[indexPath.row].title
         setCell(state: .checked)
-        dismiss(animated: true) { [weak self] in
-            guard let self = self else { return }
-            self.callback?(self.categories, indexPath.row)
-        }
+        dismissWithCallback()
     }
 }
 
@@ -196,7 +201,7 @@ extension CategoriesViewController: UITableViewDelegate {
 extension CategoriesViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        categories.count
+        return categories.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -207,7 +212,7 @@ extension CategoriesViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        75
+        return 75
     }
 }
 

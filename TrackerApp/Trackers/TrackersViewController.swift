@@ -57,8 +57,6 @@ final class TrackersViewController: UIViewController {
         textField.font = UIFont(name: "YSDisplay-Regular", size: 17)
         textField.placeholder = "Поиск"
         textField.delegate = self
-        textField.returnKeyType = .search
-        textField.enablesReturnKeyAutomatically = true
         return textField
     }()
 
@@ -87,6 +85,8 @@ final class TrackersViewController: UIViewController {
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                 withReuseIdentifier: SupplementaryView.identifier)
         collectionView.isHidden = visibleCategories.isEmpty ? true : false
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.contentInset.top = 24
         return collectionView
     }()
 
@@ -140,7 +140,7 @@ final class TrackersViewController: UIViewController {
             stubLabel.topAnchor.constraint(equalTo: stubImageView.bottomAnchor, constant: 8),
             stubLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 
-            trackersCollectionView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 34),
+            trackersCollectionView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 10),
             trackersCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             trackersCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             trackersCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
@@ -193,7 +193,7 @@ final class TrackersViewController: UIViewController {
     private func reloadCollectionView() {
         trackersCollectionView.reloadData()
         trackersCollectionView.isHidden = visibleCategories.isEmpty ? true : false
-        trackersCollectionView.contentOffset = .zero
+        trackersCollectionView.contentOffset = CGPoint(x: 0, y: -24)
         if visibleCategories.isEmpty {
             stubImageView.image = UIImage(named: "NothingFoundIcon")
             stubLabel.text = "Ничего не найдено"
@@ -213,7 +213,7 @@ final class TrackersViewController: UIViewController {
     }
 
     private func isCompletedOnCurrentDate(_ trackerID: String) -> Bool {
-        completedTrackers.contains(TrackerRecord(id: trackerID, date: currentDate))
+        return completedTrackers.contains(TrackerRecord(id: trackerID, date: currentDate))
     }
 
     private func saveTrackerRecord(for trackerID: String) {
@@ -241,15 +241,16 @@ final class TrackersViewController: UIViewController {
 extension TrackersViewController: UITextFieldDelegate {
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        let searchRequest = textField.text ?? ""
-        updateTrackersViewModel(for: .searchRequest(searchRequest))
-        reloadCollectionView()
-        view.endEditing(true)
-        return true
+        return view.endEditing(true)
     }
 
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.text = ""
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        if let searchRequest = textField.text, searchRequest != "" {
+            updateTrackersViewModel(for: .searchRequest(searchRequest))
+        } else {
+            updateTrackersViewModel(for: .newDateOrTracker)
+        }
+        reloadCollectionView()
     }
 }
 
@@ -258,11 +259,11 @@ extension TrackersViewController: UITextFieldDelegate {
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        CGSize(width: (UIScreen.main.bounds.width - 41) / 2, height: 148)
+        return CGSize(width: (UIScreen.main.bounds.width - 41) / 2, height: 148)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        9
+        return 9
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
@@ -272,13 +273,13 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
             viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader,
             at: indexPath)
         return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width,
-                                                         height: 18),
+                                                         height: 20),
                                                   withHorizontalFittingPriority: .required,
                                                   verticalFittingPriority: .fittingSizeLevel)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        UIEdgeInsets(top: 12, left: 0, bottom: 16, right: 0)
+        return UIEdgeInsets(top: 12, left: 0, bottom: 16, right: 0)
     }
 }
 
@@ -287,11 +288,11 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 extension TrackersViewController: UICollectionViewDataSource {
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        visibleCategories.count
+        return visibleCategories.count
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        visibleCategories[section].trackers.count
+        return visibleCategories[section].trackers.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

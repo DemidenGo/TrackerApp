@@ -12,7 +12,7 @@ struct Tracker: Codable {
     let name: String
     let color: UIColor
     let emoji: String
-    let schedule: Set<Schedule>
+    let schedule: Set<WeekDay>
 }
 
 enum TrackerType {

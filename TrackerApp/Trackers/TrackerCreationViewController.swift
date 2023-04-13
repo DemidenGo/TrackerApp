@@ -18,7 +18,7 @@ final class TrackerCreationViewController: UIViewController {
     private var newTracker: Tracker?
     private var selectedTrackerName: String?
     private var selectedCategoryIndex: Int?
-    private var selectedSchedule: Set<Schedule>?
+    private var selectedSchedule: Set<WeekDay>?
     private var selectedEmoji: String?
     private var selectedColor: UIColor?
 
@@ -260,7 +260,7 @@ final class TrackerCreationViewController: UIViewController {
         hideKeyboardByTap()
         if trackerType == .irregular {
             selectedSchedule = []
-            Schedule.allCases.forEach { selectedSchedule?.insert($0) }
+            WeekDay.allCases.forEach { selectedSchedule?.insert($0) }
             buttonsTableViewHeight = 75
             buttonsTableView.separatorStyle = .none
         }
@@ -399,7 +399,7 @@ final class TrackerCreationViewController: UIViewController {
 extension TrackerCreationViewController: UITextFieldDelegate {
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        view.endEditing(true)
+        return view.endEditing(true)
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
@@ -464,7 +464,7 @@ extension TrackerCreationViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        75
+        return 75
     }
 }
 
@@ -473,15 +473,15 @@ extension TrackerCreationViewController: UITableViewDataSource {
 extension TrackerCreationViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        0
+        return 0
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        0
+        return 0
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        CGSize(width: (UIScreen.main.bounds.width - 57) / 6, height: (UIScreen.main.bounds.width - 57) / 6)
+        return CGSize(width: (UIScreen.main.bounds.width - 57) / 6, height: (UIScreen.main.bounds.width - 57) / 6)
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

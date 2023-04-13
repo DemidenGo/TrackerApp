@@ -9,8 +9,8 @@ import UIKit
 
 final class ScheduleViewController: UIViewController {
 
-    var callback: ((Set<Schedule>) -> ())?
-    private lazy var selectedSchedule: Set<Schedule> = Set<Schedule>()
+    var callback: ((Set<WeekDay>) -> ())?
+    private lazy var selectedSchedule: Set<WeekDay> = Set<WeekDay>()
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -26,6 +26,7 @@ final class ScheduleViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
+        tableView.allowsSelection = false
         tableView.register(ButtonTableCell.self, forCellReuseIdentifier: ButtonTableCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
@@ -62,7 +63,7 @@ final class ScheduleViewController: UIViewController {
     }
 
     private func checkSwitchesStatus() {
-        for (index, weekDay) in Schedule.allCases.enumerated() {
+        for (index, weekDay) in WeekDay.allCases.enumerated() {
             let indexPath = IndexPath(row: index, section: 0)
             let cell = scheduleTableView.cellForRow(at: indexPath)
             guard let switchView = cell?.accessoryView as? UISwitch else { return }
@@ -99,25 +100,20 @@ final class ScheduleViewController: UIViewController {
 
 // MARK: - UITableViewDelegate
 
-extension ScheduleViewController: UITableViewDelegate {
-
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-}
+extension ScheduleViewController: UITableViewDelegate {   }
 
 // MARK: - UITableViewDataSource
 
 extension ScheduleViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        Schedule.allCases.count
+        return WeekDay.allCases.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableCell.identifier) as? ButtonTableCell else { return UITableViewCell() }
-        cell.set(label: Schedule.allCases[indexPath.row].rawValue.capitalized)
-        if indexPath.row == Schedule.allCases.count - 1 {
+        cell.set(label: WeekDay.allCases[indexPath.row].rawValue.capitalized)
+        if indexPath.row == WeekDay.allCases.count - 1 {
             cell.separatorInset = .init(top: 0, left: UIScreen.main.bounds.width, bottom: 0, right: 0)
         }
         cell.accessoryView = makeSwitchView(at: indexPath)
@@ -125,6 +121,6 @@ extension ScheduleViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        75
+        return 75
     }
 }
