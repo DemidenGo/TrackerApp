@@ -9,9 +9,8 @@ import UIKit
 
 final class TrackerTypeViewController: UIViewController {
 
-    var trackerCreationViewController: TrackerCreationViewController? = TrackerCreationViewController()
-    var callback: (([TrackerCategory]?) -> ())?
-    lazy var categories = [TrackerCategory]()
+    var trackerStore: TrackerStoreProtocol?
+    lazy var trackerCreationViewController: TrackerCreationViewController? = TrackerCreationViewController()
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -65,17 +64,14 @@ final class TrackerTypeViewController: UIViewController {
     @objc private func addRegularEvent() {
         guard let trackerCreationViewController = trackerCreationViewController else { return }
         trackerCreationViewController.trackerType = .regular
-        trackerCreationViewController.categories = categories
+        trackerCreationViewController.trackerStore = trackerStore
         trackerCreationViewController.presentationController?.delegate = trackerCreationViewController
-        trackerCreationViewController.swipeCallback = { [weak self] newCategories in
-            self?.callback?(newCategories)
+        trackerCreationViewController.swipeCallback = { [weak self] in
             self?.resetTrackerCreationViewController()
         }
-        trackerCreationViewController.callback = { [weak self] newCategories in
-            self?.dismiss(animated: true) {
-                self?.callback?(newCategories)
-                self?.resetTrackerCreationViewController()
-            }
+        trackerCreationViewController.dismissPreviousControllerCallback = { [weak self] in
+            self?.resetTrackerCreationViewController()
+            self?.dismiss(animated: true)
         }
         present(trackerCreationViewController, animated: true)
     }
@@ -83,17 +79,14 @@ final class TrackerTypeViewController: UIViewController {
     @objc private func addIrregularEvent() {
         guard let trackerCreationViewController = trackerCreationViewController else { return }
         trackerCreationViewController.trackerType = .irregular
-        trackerCreationViewController.categories = categories
+        trackerCreationViewController.trackerStore = trackerStore
         trackerCreationViewController.presentationController?.delegate = trackerCreationViewController
-        trackerCreationViewController.swipeCallback = { [weak self] newCategories in
-            self?.callback?(newCategories)
+        trackerCreationViewController.swipeCallback = { [weak self] in
             self?.resetTrackerCreationViewController()
         }
-        trackerCreationViewController.callback = { [weak self] newCategories in
-            self?.dismiss(animated: true) {
-                self?.callback?(newCategories)
-                self?.resetTrackerCreationViewController()
-            }
+        trackerCreationViewController.dismissPreviousControllerCallback = { [weak self] in
+            self?.resetTrackerCreationViewController()
+            self?.dismiss(animated: true)
         }
         present(trackerCreationViewController, animated: true)
     }

@@ -9,22 +9,23 @@ import UIKit
 
 final class TrackerCreationViewController: UIViewController {
 
-    var trackerType: TrackerType?
-    var callback: (([TrackerCategory]?) -> ())?
-    var swipeCallback: (([TrackerCategory]?) -> ())?
+    var trackerStore: TrackerStoreProtocol?
     lazy var categoriesViewController = CategoriesViewController()
     lazy var scheduleViewController = ScheduleViewController()
-    lazy var categories = [TrackerCategory]()
-    private var newTracker: Tracker?
+
+    var trackerType: TrackerType?
+    var dismissPreviousControllerCallback: (() -> Void)?
+    var swipeCallback: (() -> Void)?
+
     private var selectedTrackerName: String?
-    private var selectedCategoryIndex: Int?
+    private var selectedCategory: String?
     private var selectedSchedule: Set<WeekDay>?
     private var selectedEmoji: String?
     private var selectedColor: UIColor?
 
     private var isTrackerDataComplete: Bool {
         let isTrackerNameSelect = selectedTrackerName != nil
-        let isCategorySelect = selectedCategoryIndex != nil
+        let isCategorySelect = selectedCategory != nil
         guard let selectedSchedule = selectedSchedule else { return false }
         let isScheduleSelect = !selectedSchedule.isEmpty
         let isEmojiSelect = selectedEmoji != nil
@@ -33,8 +34,8 @@ final class TrackerCreationViewController: UIViewController {
     }
 
     private var isCharactersLimitLabelAddedToScreen: Bool { scrollView.subviews.contains(charactersLimitLabel) }
-    private lazy var offset: CGFloat = 38
     private lazy var buttonsTableViewHeight: CGFloat = 150
+    private lazy var offset: CGFloat = 38
 
     private let emojies: [String] = ["🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪"]
 
@@ -140,7 +141,7 @@ final class TrackerCreationViewController: UIViewController {
         button.backgroundColor = .white
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.buttonRed.cgColor
-        button.addTarget(self, action: #selector(cancelAction), for: .touchUpInside)
+        button.addTarget(self, action: #selector(closeControllerAction), for: .touchUpInside)
         return button
     }()
 
@@ -169,38 +170,27 @@ final class TrackerCreationViewController: UIViewController {
         setupConstraints()
     }
 
-    @objc private func cancelAction() {
-        refreshViews()
-        setToNilTemporaryValues()
+    @objc private func closeControllerAction() {
         dismiss(animated: true) { [weak self] in
-            self?.callback?(nil)
+            self?.refreshViews()
+            self?.setToNilTemporaryValues()
+            self?.dismissPreviousControllerCallback?()
         }
     }
 
     @objc private func createAction() {
         guard let selectedTrackerName = selectedTrackerName,
-              let selectedColor = selectedColor,
-              let selectedEmoji = selectedEmoji,
+              let selectedCategory = selectedCategory,
               let selectedSchedule = selectedSchedule,
-              let selectedCategoryIndex = selectedCategoryIndex else { return }
+              let selectedEmoji = selectedEmoji,
+              let selectedColor = selectedColor else { return }
         let newTracker = Tracker(id: UUID().uuidString,
                                  name: selectedTrackerName,
                                  color: selectedColor,
                                  emoji: selectedEmoji,
                                  schedule: selectedSchedule)
-        var selectedCategory = categories.remove(at: selectedCategoryIndex)
-        let selectedCategoryName = selectedCategory.title
-        var trackersInSelectedCategory = selectedCategory.trackers
-        trackersInSelectedCategory.append(newTracker)
-        selectedCategory = TrackerCategory(title: selectedCategoryName, trackers: trackersInSelectedCategory)
-        categories.append(selectedCategory)
-        categories.sort(by: { $0.title < $1.title })
-        dismiss(animated: true) { [weak self] in
-            guard let self = self else { return }
-            self.callback?(self.categories)
-            self.refreshViews()
-            self.setToNilTemporaryValues()
-        }
+        try? trackerStore?.save(newTracker, in: selectedCategory)
+        closeControllerAction()
     }
 
     private func activateCreateButton() {
@@ -214,9 +204,8 @@ final class TrackerCreationViewController: UIViewController {
     }
 
     private func setToNilTemporaryValues() {
-        newTracker = nil
         selectedTrackerName = nil
-        selectedCategoryIndex = nil
+        selectedCategory = nil
         selectedSchedule = nil
         selectedEmoji = nil
         selectedColor = nil
@@ -224,18 +213,42 @@ final class TrackerCreationViewController: UIViewController {
 
     private func refreshViews() {
         trackerNameTextField.text = nil
+        setCategoryButtonTitle()
+        setScheduleButtonTitle()
+        deselectEmoji()
+        deselectColor()
+        createButton.backgroundColor = .interfaceGray
+        scrollView.contentOffset = .zero
+    }
+
+    private func setCategoryButtonTitle(with additionalText: String? = nil) {
         let categoryButton = buttonsTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ButtonTableCell
-        categoryButton?.set(label: "Категория")
+        if let additionalText = additionalText {
+            categoryButton?.set(label: "Категория", additionalText: additionalText)
+        } else {
+            categoryButton?.set(label: "Категория")
+        }
+    }
+
+    private func setScheduleButtonTitle(with additionalText: String? = nil) {
         let scheduleButton = buttonsTableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? ButtonTableCell
-        scheduleButton?.set(label: "Расписание")
+        if let additionalText = additionalText {
+            scheduleButton?.set(label: "Расписание", additionalText: additionalText)
+        } else {
+            scheduleButton?.set(label: "Расписание")
+        }
+    }
+
+    private func deselectEmoji() {
         if let emojiIndex = emojies.firstIndex(where: { $0 == selectedEmoji }) {
             emojiCollectionView.deselectItem(at: IndexPath(row: emojiIndex, section: 0), animated: true)
         }
+    }
+
+    private func deselectColor() {
         if let colorIndex = colors.firstIndex(where: { $0 == selectedColor }) {
             colorCollectionView.deselectItem(at: IndexPath(row: colorIndex, section: 0), animated: true)
         }
-        createButton.backgroundColor = .interfaceGray
-        scrollView.contentOffset = .zero
     }
 
     private func showCharactersLimitLabel() {
@@ -359,33 +372,31 @@ final class TrackerCreationViewController: UIViewController {
     }
 
     private func tapCategoriesAction() {
-        categoriesViewController.categories = categories
-        categoriesViewController.callback = { [weak self] newCategories, selectedCategoryIndex  in
-            guard let self = self,
-                  let newCategories = newCategories,
-                  let selectedCategoryIndex = selectedCategoryIndex else { return }
-            self.categories = newCategories
-            self.selectedCategoryIndex = selectedCategoryIndex
-            let cell = self.buttonsTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ButtonTableCell
-            let selectedCategoryName = self.categories[selectedCategoryIndex].title
-            cell?.set(label: "Категория", additionalText: selectedCategoryName)
-            self.activateCreateButton()
+        categoriesViewController.callback = { [weak self] categoryName in
+            guard let categoryName = categoryName else {
+                self?.setCategoryButtonTitle()
+                self?.selectedCategory = nil
+                self?.deactivateCreateButton()
+                return
+            }
+            self?.setCategoryButtonTitle(with: categoryName)
+            self?.selectedCategory = categoryName
+            self?.activateCreateButton()
         }
         categoriesViewController.presentationController?.delegate = categoriesViewController
         present(categoriesViewController, animated: true)
     }
 
-    private func tapScheduleAction(at indexPath: IndexPath, for tableView: UITableView) {
+    private func tapScheduleAction() {
         scheduleViewController.callback = { [weak self] selectedSchedule in
-            let cell = tableView.cellForRow(at: indexPath) as? ButtonTableCell
             guard !selectedSchedule.isEmpty else {
-                cell?.set(label: "Расписание")
+                self?.setScheduleButtonTitle()
                 self?.selectedSchedule = nil
                 self?.deactivateCreateButton()
                 return
             }
             let additionalText = selectedSchedule.map { $0.inShortStyleString }
-            cell?.set(label: "Расписание", additionalText: additionalText.sortByWeekDaysString)
+            self?.setScheduleButtonTitle(with: additionalText.sortByWeekDaysString)
             self?.selectedSchedule = selectedSchedule
             self?.activateCreateButton()
         }
@@ -428,11 +439,7 @@ extension TrackerCreationViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.row == 0 {
-            tapCategoriesAction()
-            return
-        }
-        tapScheduleAction(at: indexPath, for: tableView)
+        indexPath.row == 0 ? tapCategoriesAction() : tapScheduleAction()
     }
 }
 
@@ -550,8 +557,8 @@ extension TrackerCreationViewController: UICollectionViewDataSource {
 extension TrackerCreationViewController: UIAdaptivePresentationControllerDelegate {
 
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-        swipeCallback?(nil)
         refreshViews()
         setToNilTemporaryValues()
+        swipeCallback?()
     }
 }
