@@ -9,36 +9,12 @@ import UIKit
 
 final class CategoriesViewController: UIViewController {
 
-    var callback: (([TrackerCategory]?, Int?) -> ())?
+    lazy var categoryStore: CategoryStoreProtocol = CategoryStore(delegate: self)
     lazy var newCategoryViewController = NewCategoryViewController()
-    lazy var categories = [TrackerCategory]()
+
+    var callback: ((String?) -> ())?
     private var selectedCategoryName: String?
-    private var isNewCategory: Bool { !categories.contains(where: { $0.title == selectedCategoryName }) }
-
-    private var selectedCategoryIndex: Int? {
-        if let selectedCategoryIndex = categories.firstIndex(where: { $0.title == selectedCategoryName }) {
-            return selectedCategoryIndex
-        }
-        return nil
-    }
-
-    private var selectedCategoryIndexPath: IndexPath? {
-        if let selectedCategoryIndex = selectedCategoryIndex {
-            return IndexPath(row: selectedCategoryIndex, section: 0)
-        }
-        return nil
-    }
-
-    private var selectedCategoryCell: UITableViewCell? {
-        if let selectedCategoryIndexPath = self.selectedCategoryIndexPath {
-            return categoriesTableView.cellForRow(at: selectedCategoryIndexPath)
-        }
-        return nil
-    }
-
-    private enum CellState {
-        case checked, unchecked
-    }
+    private var checkedCellIndexPath: IndexPath?
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -53,7 +29,6 @@ final class CategoriesViewController: UIViewController {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.image = UIImage(named: "StarIcon")
-        imageView.isHidden = categories.isEmpty ? false : true
         return imageView
     }()
 
@@ -64,7 +39,6 @@ final class CategoriesViewController: UIViewController {
         label.font = UIFont(name: "YSDisplay-Medium", size: 12)
         label.numberOfLines = 2
         label.textAlignment = .center
-        label.isHidden = categories.isEmpty ? false : true
         return label
     }()
 
@@ -98,42 +72,47 @@ final class CategoriesViewController: UIViewController {
         setupConstraints()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        categoriesTableView.isHidden = categoryStore.numberOfItems() == 0 ? true : false
+    }
+
     @objc private func addCategoryButtonAction() {
         newCategoryViewController.presentationController?.delegate = newCategoryViewController
-        newCategoryViewController.callback = { [weak self] newCategoryName in
-            guard let newCategoryName = newCategoryName, let self = self else { return }
-            self.setCell(state: .unchecked)
-            self.selectedCategoryName = newCategoryName
-            if !self.isNewCategory {
-                self.setCell(state: .checked)
-                self.dismissWithCallback()
+        newCategoryViewController.callback = { [weak self] newCategory in
+            guard let newCategory = newCategory, let self = self else { return }
+            self.selectedCategoryName = newCategory
+            self.uncheckCellIfNeeded()
+            if let existingIndexPath = self.categoryStore.indexPath(for: newCategory) {
+                self.checkCell(at: existingIndexPath)
                 return
             }
-            self.appendNewCategory(name: newCategoryName)
-            self.updateTableView()
-            self.setCell(state: .checked)
-            self.dismissWithCallback()
+            if let newIndexPath = try? self.categoryStore.save(newCategory) {
+                self.checkCell(at: newIndexPath)
+            }
         }
         present(newCategoryViewController, animated: true)
     }
 
-    private func dismissWithCallback() {
-        dismiss(animated: true) { [weak self] in
-            self?.callback?(self?.categories, self?.selectedCategoryIndex)
+    private func uncheckCellIfNeeded() {
+        if let indexPath = checkedCellIndexPath {
+            let cell = categoriesTableView.cellForRow(at: indexPath)
+            cell?.accessoryType = .none
+            checkedCellIndexPath = nil
         }
     }
 
-    private func appendNewCategory(name: String) {
-        let newCategory = TrackerCategory(title: name, trackers: [])
-        categories.append(newCategory)
-        categories.sort(by: { $0.title < $1.title })
+    private func checkCell(at indexPath: IndexPath) {
+        let cell = categoriesTableView.cellForRow(at: indexPath)
+        cell?.accessoryType = .checkmark
+        checkedCellIndexPath = indexPath
+        categoriesTableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
+        dismissWithCallback()
     }
 
-    private func updateTableView() {
-        if let selectedCategoryIndexPath = self.selectedCategoryIndexPath {
-            categoriesTableView.performBatchUpdates {
-                categoriesTableView.insertRows(at: [selectedCategoryIndexPath], with: .automatic)
-            }
+    private func dismissWithCallback() {
+        dismiss(animated: true) { [weak self] in
+            self?.callback?(self?.selectedCategoryName)
         }
     }
 
@@ -161,24 +140,24 @@ final class CategoriesViewController: UIViewController {
         ])
     }
 
-    private func setCell(state: CellState) {
-        guard let selectedCategoryCell = selectedCategoryCell else { return }
-        switch state {
-        case .checked:
-            selectedCategoryCell.accessoryType = .checkmark
-        case .unchecked:
-            selectedCategoryCell.accessoryType = .none
-        }
-    }
-
     private func customizeCornersAndSeparator(for cell: UITableViewCell, at indexPath: IndexPath) {
-        if indexPath.row == categories.count - 1 {
+        if indexPath.row == categoryStore.numberOfItems() - 1 {
             cell.layer.masksToBounds = true
             cell.layer.cornerRadius = 16
             cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
             cell.selectedBackgroundView?.layer.cornerRadius = 16
             cell.selectedBackgroundView?.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
             cell.separatorInset = .init(top: 0, left: UIScreen.main.bounds.width, bottom: 0, right: 0)
+            if categoryStore.numberOfItems() > 1 {
+                let indexPathForReload = IndexPath(row: indexPath.row - 1, section: indexPath.section)
+                let cellForReload = categoriesTableView.cellForRow(at: indexPathForReload)
+                cellForReload?.layer.cornerRadius = 0
+                cellForReload?.selectedBackgroundView?.layer.cornerRadius = 0
+                cellForReload?.separatorInset = .init(top: 0, left: 16, bottom: 0, right: 16)
+                categoriesTableView.performBatchUpdates {
+                    categoriesTableView.reloadRows(at: [indexPathForReload], with: .automatic)
+                }
+            }
         }
     }
 }
@@ -189,10 +168,9 @@ extension CategoriesViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        setCell(state: .unchecked)
-        selectedCategoryName = categories[indexPath.row].title
-        setCell(state: .checked)
-        dismissWithCallback()
+        uncheckCellIfNeeded()
+        selectedCategoryName = categoryStore.object(at: indexPath)
+        checkCell(at: indexPath)
     }
 }
 
@@ -201,12 +179,14 @@ extension CategoriesViewController: UITableViewDelegate {
 extension CategoriesViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categories.count
+        return categoryStore.numberOfItems()
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableCell.identifier) as? ButtonTableCell else { return UITableViewCell() }
-        cell.set(label: categories[indexPath.row].title)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableCell.identifier) as? ButtonTableCell,
+              let categoryName = categoryStore.object(at: indexPath) else { return UITableViewCell() }
+        cell.set(label: categoryName)
+        if indexPath == checkedCellIndexPath { cell.accessoryType = .checkmark }
         customizeCornersAndSeparator(for: cell, at: indexPath)
         return cell
     }
@@ -222,6 +202,20 @@ extension CategoriesViewController: UIAdaptivePresentationControllerDelegate {
 
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
         selectedCategoryName = nil
-        callback?(nil, nil)
+        callback?(nil)
+    }
+}
+
+// MARK: - CategoryStoreDelegate
+
+extension CategoriesViewController: CategoryStoreDelegate {
+
+    func didUpdateCategory(_ insertedIndexes: IndexSet, _ deletedIndexes: IndexSet) {
+        let insertedIndexPaths = insertedIndexes.map { IndexPath(item: $0, section: 0) }
+        let deletedIndexPaths = deletedIndexes.map { IndexPath(item: $0, section: 0) }
+        categoriesTableView.performBatchUpdates {
+            categoriesTableView.insertRows(at: insertedIndexPaths, with: .automatic)
+            categoriesTableView.deleteRows(at: deletedIndexPaths, with: .automatic)
+        }
     }
 }

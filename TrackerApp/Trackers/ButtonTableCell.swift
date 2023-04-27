@@ -26,6 +26,10 @@ final class ButtonTableCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func prepareForReuse() {
+        accessoryType = .none
+    }
+
     private func setupCell() {
         backgroundColor = .backgroundColor
         separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
@@ -35,25 +39,26 @@ final class ButtonTableCell: UITableViewCell {
         contentView.addSubview(label)
         NSLayoutConstraint.activate([
             label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -6),
             label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
 
-    func set(label text: String) {
-        label.text = text
-    }
-
-    func set(label text: String, additionalText: String) {
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 2
-        let labelAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black,
-                               NSAttributedString.Key.paragraphStyle : paragraphStyle]
-        let additionalTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.interfaceGray]
-        let labelText = NSMutableAttributedString(string: text, attributes: labelAttributes)
-        let additionalText = NSMutableAttributedString(string: "\n\(additionalText)",
-                                                       attributes: additionalTextAttributes)
-        labelText.append(additionalText)
-        label.numberOfLines = 2
-        label.attributedText = labelText
+    func set(label text: String, additionalText: String? = nil) {
+        if let additionalText = additionalText {
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineSpacing = 2
+            let labelAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black,
+                                   NSAttributedString.Key.paragraphStyle : paragraphStyle]
+            let additionalTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.interfaceGray]
+            let labelText = NSMutableAttributedString(string: text, attributes: labelAttributes)
+            let additionalText = NSMutableAttributedString(string: "\n\(additionalText)",
+                                                           attributes: additionalTextAttributes)
+            labelText.append(additionalText)
+            label.numberOfLines = 2
+            label.attributedText = labelText
+        } else {
+            label.text = text
+        }
     }
 }

@@ -110,7 +110,7 @@ final class TrackerCell: UICollectionViewCell {
         trackerNameLabel.text = viewModel.name
     }
 
-    func set(dayCounter: Int) {
+    func set(_ dayCounter: Int) {
         dayCounterLabel.text = dayCounter.days
     }
 
