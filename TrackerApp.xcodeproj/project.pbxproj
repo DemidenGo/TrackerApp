@@ -51,6 +51,8 @@
 		9275A81529D2FE8000F7FD64 /* NewCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9275A81429D2FE8000F7FD64 /* NewCategoryViewController.swift */; };
 		9275A81929D5DF4400F7FD64 /* WeekDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9275A81829D5DF4400F7FD64 /* WeekDay.swift */; };
 		9275A81D29D5E5F000F7FD64 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9275A81C29D5E5F000F7FD64 /* Array+Extensions.swift */; };
+		92DB0DDB29FE92E600877A94 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DB0DDA29FE92E600877A94 /* OnboardingViewController.swift */; };
+		92DB0DDF29FEB84000877A94 /* UserDefaults+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DB0DDE29FEB84000877A94 /* UserDefaults+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -100,6 +102,8 @@
 		9275A81429D2FE8000F7FD64 /* NewCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCategoryViewController.swift; sourceTree = "<group>"; };
 		9275A81829D5DF4400F7FD64 /* WeekDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekDay.swift; sourceTree = "<group>"; };
 		9275A81C29D5E5F000F7FD64 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
+		92DB0DDA29FE92E600877A94 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
+		92DB0DDE29FEB84000877A94 /* UserDefaults+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +136,7 @@
 		920B867D29AD404E00DAD3C2 /* TrackerApp */ = {
 			isa = PBXGroup;
 			children = (
+				92DB0DD929FE92C300877A94 /* Onboarding */,
 				9275A7B129C06B6100F7FD64 /* Navigation */,
 				9275A7AF29C06B0D00F7FD64 /* Trackers */,
 				9275A7B029C06B4C00F7FD64 /* Statistics */,
@@ -234,6 +239,7 @@
 				9275A80B29CE0FBC00F7FD64 /* UIViewController+Extensions.swift */,
 				9275A81C29D5E5F000F7FD64 /* Array+Extensions.swift */,
 				9256642629F0407100C12005 /* UIColorMarshalling.swift */,
+				92DB0DDE29FEB84000877A94 /* UserDefaults+Extensions.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -275,6 +281,14 @@
 				9256644429F2BF2400C12005 /* RecordStore */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		92DB0DD929FE92C300877A94 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				92DB0DDA29FE92E600877A94 /* OnboardingViewController.swift */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -350,6 +364,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92DB0DDF29FEB84000877A94 /* UserDefaults+Extensions.swift in Sources */,
 				9275A7DC29C98B4A00F7FD64 /* SupplementaryView.swift in Sources */,
 				9275A81529D2FE8000F7FD64 /* NewCategoryViewController.swift in Sources */,
 				9256644629F2BF5E00C12005 /* TrackerStoreDelegate.swift in Sources */,
@@ -377,6 +392,7 @@
 				9275A80C29CE0FBC00F7FD64 /* UIViewController+Extensions.swift in Sources */,
 				9275A7C629C34C7800F7FD64 /* Tracker.swift in Sources */,
 				9275A7DA29C8FDAA00F7FD64 /* TrackerCell.swift in Sources */,
+				92DB0DDB29FE92E600877A94 /* OnboardingViewController.swift in Sources */,
 				9275A7D629C650E600F7FD64 /* ButtonTableCell.swift in Sources */,
 				9256644129F2BE9500C12005 /* TrackerStoreProtocol.swift in Sources */,
 				9275A7E629CB43BF00F7FD64 /* Date+Extensions.swift in Sources */,

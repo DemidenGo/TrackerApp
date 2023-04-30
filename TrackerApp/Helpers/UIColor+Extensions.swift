@@ -31,7 +31,6 @@ extension Encodable where Self: UIColor {
         self.getRed(&r, green: &g, blue: &b, alpha: &a)
         try container.encode([r,g,b,a])
     }
-
 }
 
 extension UIColor: Codable { }
