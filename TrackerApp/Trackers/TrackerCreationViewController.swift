@@ -372,6 +372,7 @@ final class TrackerCreationViewController: UIViewController {
     }
 
     private func tapCategoriesAction() {
+        categoriesViewController.initialize(CategoriesViewModel())
         categoriesViewController.callback = { [weak self] categoryName in
             guard let categoryName = categoryName else {
                 self?.setCategoryButtonTitle()

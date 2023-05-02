@@ -12,8 +12,6 @@ final class CategoryStore: NSObject {
 
     weak var delegate: CategoryStoreDelegate?
     private let context: NSManagedObjectContext
-    private var insertedIndexes: IndexSet?
-    private var deletedIndexes: IndexSet?
 
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData> = {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
@@ -27,21 +25,15 @@ final class CategoryStore: NSObject {
         return controller
     }()
 
-    init(context: NSManagedObjectContext, delegate: CategoryStoreDelegate) {
+    init(context: NSManagedObjectContext) {
         self.context = context
-        self.delegate = delegate
     }
 
-    convenience init(delegate: CategoryStoreDelegate) {
+    override convenience init() {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
             fatalError("Error: appDelegate not found")
         }
-        self.init(context: appDelegate.persistentContainer.viewContext, delegate: delegate)
-    }
-
-    private func clearUpdatedIndexes() {
-        insertedIndexes = nil
-        deletedIndexes = nil
+        self.init(context: appDelegate.persistentContainer.viewContext)
     }
 
     private func makeCategoryName(from categoryCoreData: TrackerCategoryCoreData) throws -> String {
@@ -50,35 +42,22 @@ final class CategoryStore: NSObject {
         }
         return categoryName
     }
+
+    private func deselectPreviousCategory() throws {
+        let categoryCoreData = fetchedResultsController.fetchedObjects ?? []
+        guard let previousSelectedCategory = categoryCoreData.first(where: { $0.isCategorySelect == true }) else {
+            return
+        }
+        previousSelectedCategory.isCategorySelect = false
+    }
 }
 
 // MARK: - NSFetchedResultsControllerDelegate
 
 extension CategoryStore: NSFetchedResultsControllerDelegate {
 
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        insertedIndexes = IndexSet()
-        deletedIndexes = IndexSet()
-    }
-
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        delegate?.didUpdateCategory(insertedIndexes ?? IndexSet(), deletedIndexes ?? IndexSet())
-        clearUpdatedIndexes()
-    }
-
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        switch type {
-        case .insert:
-            if let indexPath = newIndexPath {
-                insertedIndexes?.insert(indexPath.item)
-            }
-        case .delete:
-            if let indexPath = indexPath {
-                deletedIndexes?.insert(indexPath.item)
-            }
-        default:
-            break
-        }
+        delegate?.didUpdateCategories()
     }
 }
 
@@ -86,31 +65,33 @@ extension CategoryStore: NSFetchedResultsControllerDelegate {
 
 extension CategoryStore: CategoryStoreProtocol {
 
-    func numberOfItems() -> Int {
-        fetchedResultsController.sections?[0].numberOfObjects ?? 0
+    var categories: [TrackerCategoryCoreData] {
+        fetchedResultsController.fetchedObjects ?? []
     }
 
-    func indexPath(for existingCategory: String) -> IndexPath? {
-        let categories = fetchedResultsController.fetchedObjects?.map { try? makeCategoryName(from: $0) }
-        guard let index = categories?.firstIndex(of: existingCategory) else { return nil }
-        return IndexPath(row: index, section: 0)
-    }
-
-    func object(at indexPath: IndexPath) -> String? {
-        let categoryCoreData = fetchedResultsController.object(at: indexPath)
-        return try? makeCategoryName(from: categoryCoreData)
-    }
-
-    func save(_ category: String) throws -> IndexPath? {
+    func save(_ category: String) throws {
+        try deselectPreviousCategory()
         let categoryCoreData = TrackerCategoryCoreData(context: context)
         categoryCoreData.title = category
+        categoryCoreData.isCategorySelect = true
         try context.save()
-        return fetchedResultsController.indexPath(forObject: categoryCoreData)
     }
 
     func deleteCategory(at indexPath: IndexPath) throws {
         let categoryCoreData = fetchedResultsController.object(at: indexPath)
         context.delete(categoryCoreData)
         try context.save()
+    }
+
+    func setSelected(at indexPath: IndexPath) throws {
+        try deselectPreviousCategory()
+        let categoryCoreData = fetchedResultsController.object(at: indexPath)
+        categoryCoreData.isCategorySelect = true
+        try context.save()
+    }
+
+    func objectTitle(at indexPath: IndexPath) -> String? {
+        let trackerCategoryCoreData = fetchedResultsController.object(at: indexPath)
+        return try? makeCategoryName(from: trackerCategoryCoreData)
     }
 }

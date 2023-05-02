@@ -51,6 +51,10 @@
 		9275A81529D2FE8000F7FD64 /* NewCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9275A81429D2FE8000F7FD64 /* NewCategoryViewController.swift */; };
 		9275A81929D5DF4400F7FD64 /* WeekDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9275A81829D5DF4400F7FD64 /* WeekDay.swift */; };
 		9275A81D29D5E5F000F7FD64 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9275A81C29D5E5F000F7FD64 /* Array+Extensions.swift */; };
+		92D0E42A2A0044C300152FB6 /* CategoriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D0E4292A0044C300152FB6 /* CategoriesViewModel.swift */; };
+		92D0E42C2A004D0900152FB6 /* ObservableWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D0E42B2A004D0900152FB6 /* ObservableWrapper.swift */; };
+		92D0E42E2A00F3FC00152FB6 /* CategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D0E42D2A00F3FC00152FB6 /* CategoryViewModel.swift */; };
+		92D0E4302A0179BE00152FB6 /* CategoriesViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D0E42F2A0179BE00152FB6 /* CategoriesViewModelProtocol.swift */; };
 		92DB0DDB29FE92E600877A94 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DB0DDA29FE92E600877A94 /* OnboardingViewController.swift */; };
 		92DB0DDF29FEB84000877A94 /* UserDefaults+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DB0DDE29FEB84000877A94 /* UserDefaults+Extensions.swift */; };
 /* End PBXBuildFile section */
@@ -102,6 +106,10 @@
 		9275A81429D2FE8000F7FD64 /* NewCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCategoryViewController.swift; sourceTree = "<group>"; };
 		9275A81829D5DF4400F7FD64 /* WeekDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekDay.swift; sourceTree = "<group>"; };
 		9275A81C29D5E5F000F7FD64 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
+		92D0E4292A0044C300152FB6 /* CategoriesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesViewModel.swift; sourceTree = "<group>"; };
+		92D0E42B2A004D0900152FB6 /* ObservableWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservableWrapper.swift; sourceTree = "<group>"; };
+		92D0E42D2A00F3FC00152FB6 /* CategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewModel.swift; sourceTree = "<group>"; };
+		92D0E42F2A0179BE00152FB6 /* CategoriesViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesViewModelProtocol.swift; sourceTree = "<group>"; };
 		92DB0DDA29FE92E600877A94 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		92DB0DDE29FEB84000877A94 /* UserDefaults+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -173,7 +181,7 @@
 			path = TrackerStore;
 			sourceTree = "<group>";
 		};
-		9256643F29F2BE6E00C12005 /* CategoryStore */ = {
+		9256643F29F2BE6E00C12005 /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				9256643229F0516B00C12005 /* CategoryStore.swift */,
@@ -181,7 +189,7 @@
 				9256644729F2BF9700C12005 /* CategoryStoreDelegate.swift */,
 				9256644B29F2BFEE00C12005 /* CategoryStoreError.swift */,
 			);
-			path = CategoryStore;
+			path = Model;
 			sourceTree = "<group>";
 		};
 		9256644429F2BF2400C12005 /* RecordStore */ = {
@@ -203,7 +211,7 @@
 				9275A7DB29C98B4A00F7FD64 /* SupplementaryView.swift */,
 				9275A7C229C3132400F7FD64 /* TrackerTypeViewController.swift */,
 				9275A7CB29C3660700F7FD64 /* TrackerCreationViewController.swift */,
-				9275A80D29D2D95B00F7FD64 /* CategoriesViewController.swift */,
+				92D0E4262A00429300152FB6 /* Categories-MVVM */,
 				9275A81429D2FE8000F7FD64 /* NewCategoryViewController.swift */,
 				9275A80F29D2DAD000F7FD64 /* ScheduleViewController.swift */,
 				9275A7D529C650E600F7FD64 /* ButtonTableCell.swift */,
@@ -277,10 +285,38 @@
 			isa = PBXGroup;
 			children = (
 				9256643E29F2BE5E00C12005 /* TrackerStore */,
-				9256643F29F2BE6E00C12005 /* CategoryStore */,
 				9256644429F2BF2400C12005 /* RecordStore */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		92D0E4262A00429300152FB6 /* Categories-MVVM */ = {
+			isa = PBXGroup;
+			children = (
+				9256643F29F2BE6E00C12005 /* Model */,
+				92D0E4272A0042F600152FB6 /* View */,
+				92D0E4282A00430000152FB6 /* ViewModel */,
+			);
+			path = "Categories-MVVM";
+			sourceTree = "<group>";
+		};
+		92D0E4272A0042F600152FB6 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				9275A80D29D2D95B00F7FD64 /* CategoriesViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		92D0E4282A00430000152FB6 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				92D0E4292A0044C300152FB6 /* CategoriesViewModel.swift */,
+				92D0E42F2A0179BE00152FB6 /* CategoriesViewModelProtocol.swift */,
+				92D0E42D2A00F3FC00152FB6 /* CategoryViewModel.swift */,
+				92D0E42B2A004D0900152FB6 /* ObservableWrapper.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		92DB0DD929FE92C300877A94 /* Onboarding */ = {
@@ -384,6 +420,7 @@
 				9275A81D29D5E5F000F7FD64 /* Array+Extensions.swift in Sources */,
 				9275A7E029CB08C300F7FD64 /* TrackerCellDelegate.swift in Sources */,
 				920B867F29AD404E00DAD3C2 /* AppDelegate.swift in Sources */,
+				92D0E42C2A004D0900152FB6 /* ObservableWrapper.swift in Sources */,
 				9275A80E29D2D95B00F7FD64 /* CategoriesViewController.swift in Sources */,
 				9256644829F2BF9700C12005 /* CategoryStoreDelegate.swift in Sources */,
 				9275A7CA29C3569200F7FD64 /* TrackerRecord.swift in Sources */,
@@ -398,6 +435,8 @@
 				9275A7E629CB43BF00F7FD64 /* Date+Extensions.swift in Sources */,
 				9256643129F0514900C12005 /* TrackerStore.swift in Sources */,
 				9256644C29F2BFEE00C12005 /* CategoryStoreError.swift in Sources */,
+				92D0E42A2A0044C300152FB6 /* CategoriesViewModel.swift in Sources */,
+				92D0E42E2A00F3FC00152FB6 /* CategoryViewModel.swift in Sources */,
 				9275A7AD29C06AD600F7FD64 /* StatisticsViewController.swift in Sources */,
 				9256643329F0516B00C12005 /* CategoryStore.swift in Sources */,
 				9275A7C329C3132400F7FD64 /* TrackerTypeViewController.swift in Sources */,
@@ -405,6 +444,7 @@
 				9275A7CC29C3660700F7FD64 /* TrackerCreationViewController.swift in Sources */,
 				9275A7D229C4C5B800F7FD64 /* EmojiAndColorCell.swift in Sources */,
 				920B868129AD404E00DAD3C2 /* SceneDelegate.swift in Sources */,
+				92D0E4302A0179BE00152FB6 /* CategoriesViewModelProtocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

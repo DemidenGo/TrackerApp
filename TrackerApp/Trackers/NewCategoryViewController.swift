@@ -66,6 +66,7 @@ final class NewCategoryViewController: UIViewController {
     @objc private func doneButtonAction() {
         dismiss(animated: true) { [weak self] in
             self?.callback?(self?.newCategoryName)
+            self?.disableDoneButton()
             self?.newCategoryName = nil
             self?.categoryNameTextField.text = nil
         }

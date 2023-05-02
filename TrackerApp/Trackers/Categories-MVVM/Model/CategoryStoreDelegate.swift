@@ -8,5 +8,5 @@
 import UIKit
 
 protocol CategoryStoreDelegate: AnyObject {
-    func didUpdateCategory(_ insertedIndexes: IndexSet, _ deletedIndexes: IndexSet)
+    func didUpdateCategories()
 }
