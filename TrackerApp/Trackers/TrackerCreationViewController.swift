@@ -10,8 +10,8 @@ import UIKit
 final class TrackerCreationViewController: UIViewController {
 
     var trackerStore: TrackerStoreProtocol?
-    lazy var categoriesViewController = CategoriesViewController()
-    lazy var scheduleViewController = ScheduleViewController()
+    var categoriesViewController: CategoriesViewController?
+    var scheduleViewController: ScheduleViewController?
 
     var trackerType: TrackerType?
     var dismissPreviousControllerCallback: (() -> Void)?
@@ -372,7 +372,9 @@ final class TrackerCreationViewController: UIViewController {
     }
 
     private func tapCategoriesAction() {
-        categoriesViewController.initialize(CategoriesViewModel())
+        let categoriesViewModel = CategoriesViewModel()
+        categoriesViewController = CategoriesViewController(viewModel: categoriesViewModel)
+        guard let categoriesViewController = categoriesViewController else { return }
         categoriesViewController.callback = { [weak self] categoryName in
             guard let categoryName = categoryName else {
                 self?.setCategoryButtonTitle()
@@ -389,6 +391,8 @@ final class TrackerCreationViewController: UIViewController {
     }
 
     private func tapScheduleAction() {
+        scheduleViewController = ScheduleViewController()
+        guard let scheduleViewController = scheduleViewController else { return }
         scheduleViewController.callback = { [weak self] selectedSchedule in
             guard !selectedSchedule.isEmpty else {
                 self?.setScheduleButtonTitle()

@@ -5,7 +5,7 @@
 //  Created by Юрий Демиденко on 21.04.2023.
 //
 
-import UIKit
+import Foundation
 
 protocol CategoryStoreProtocol {
     var delegate: CategoryStoreDelegate? { get set }

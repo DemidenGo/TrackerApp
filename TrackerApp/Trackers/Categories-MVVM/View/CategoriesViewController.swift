@@ -11,7 +11,7 @@ final class CategoriesViewController: UIViewController {
 
     var callback: ((String?) -> ())?
     var viewModel: CategoriesViewModelProtocol?
-    lazy var newCategoryViewController = NewCategoryViewController()
+    var newCategoryViewController: NewCategoryViewController?
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -67,6 +67,7 @@ final class CategoriesViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupConstraints()
+        bind()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -75,36 +76,37 @@ final class CategoriesViewController: UIViewController {
         categoriesTableView.isHidden = viewModel.categories.isEmpty
     }
 
-    func initialize(_ viewModel: CategoriesViewModel) {
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        guard let viewModel = viewModel, !viewModel.categories.isEmpty else { return }
+        categoriesTableView.scrollToRow(at: viewModel.selectedCategoryIndexPath, at: .bottom, animated: true)
+    }
+
+    init(viewModel: CategoriesViewModelProtocol) {
+        super.init(nibName: nil, bundle: nil)
         self.viewModel = viewModel
-        bind()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     private func bind() {
         guard let viewModel = viewModel else { return }
         viewModel.categoriesObservable.bind { [weak self] _ in
+            self?.categoriesTableView.isHidden = viewModel.categories.isEmpty
             self?.categoriesTableView.reloadData()
+            self?.dismissWithCallback()
         }
     }
 
     @objc private func addCategoryButtonAction() {
+        newCategoryViewController = NewCategoryViewController()
+        guard let newCategoryViewController = newCategoryViewController else { return }
         newCategoryViewController.presentationController?.delegate = newCategoryViewController
         newCategoryViewController.callback = { [weak self] category in
-            guard let category = category, let self = self, let viewModel = self.viewModel else { return }
-            var indexToScroll = 0
-            if viewModel.isNew(category) {
-                viewModel.addToStore(category)
-                indexToScroll = viewModel.index(of: category) ?? 0
-            }
-            if let index = viewModel.index(of: category) {
-                let indexPath = IndexPath(row: index, section: 0)
-                viewModel.selectCategory(at: indexPath)
-                indexToScroll = index
-            }
-            let indexPathToScroll = IndexPath(row: indexToScroll, section: 0)
-            self.categoriesTableView.isHidden = viewModel.categories.isEmpty
-            self.categoriesTableView.scrollToRow(at: indexPathToScroll, at: .bottom, animated: false)
-            self.dismissWithCallback()
+            guard let category = category else { return }
+            self?.viewModel?.didCreate(category)
         }
         present(newCategoryViewController, animated: true)
     }

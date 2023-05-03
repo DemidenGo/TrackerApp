@@ -27,6 +27,23 @@ final class CategoriesViewModel {
                               isSelected: $0.isCategorySelect)
         }
     }
+
+    private func index(of category: String) -> Int {
+        categories.firstIndex { $0.title == category } ?? 0
+    }
+
+    private func isNew(_ category: String) -> Bool {
+        !categories.contains { $0.title == category }
+    }
+
+    private func addToStore(_ newCategory: String) {
+        try? categoryStore?.save(newCategory)
+    }
+
+    private func select(_ category: String) {
+        let indexPath = IndexPath(row: index(of: category), section: 0)
+        selectCategory(at: indexPath)
+    }
 }
 
 //MARK: - CategoriesViewModelProtocol
@@ -41,16 +58,9 @@ extension CategoriesViewModel: CategoriesViewModelProtocol {
         categories.first(where: { $0.isSelected == true })?.title
     }
 
-    func isNew(_ category: String) -> Bool {
-        !categories.contains { $0.title == category }
-    }
-
-    func index(of category: String) -> Int? {
-        categories.firstIndex { $0.title == category } ?? 0
-    }
-
-    func addToStore(_ newCategory: String) {
-        try? categoryStore?.save(newCategory)
+    var selectedCategoryIndexPath: IndexPath {
+        let index = categories.firstIndex { $0.isSelected == true } ?? 0
+        return IndexPath(row: index, section: 0)
     }
 
     func deleteCategoryFromStore(at indexPath: IndexPath) {
@@ -59,6 +69,10 @@ extension CategoriesViewModel: CategoriesViewModelProtocol {
 
     func selectCategory(at indexPath: IndexPath) {
         try? categoryStore?.setSelected(at: indexPath)
+    }
+
+    func didCreate(_ category: String) {
+        isNew(category) ? addToStore(category) : select(category)
     }
 }
 

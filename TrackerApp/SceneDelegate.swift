@@ -19,8 +19,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             window?.rootViewController = tabBarController
         } else {
             UserDefaults.standard.hasLaunchBefore = true
-            let onboardingViewController = OnboardingViewController(transitionStyle: .scroll,
-                                                                    navigationOrientation: .horizontal)
+            let pageViewController = UIPageViewController(transitionStyle: .scroll,
+                                                          navigationOrientation: .horizontal)
+            let onboardingViewController = PageModel(pageController: pageViewController)
             window?.rootViewController = onboardingViewController
         }
         window?.makeKeyAndVisible()

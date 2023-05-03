@@ -10,7 +10,7 @@ import UIKit
 final class TrackerTypeViewController: UIViewController {
 
     var trackerStore: TrackerStoreProtocol?
-    lazy var trackerCreationViewController: TrackerCreationViewController? = TrackerCreationViewController()
+    var trackerCreationViewController: TrackerCreationViewController?
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -62,6 +62,7 @@ final class TrackerTypeViewController: UIViewController {
     }
 
     @objc private func addRegularEvent() {
+        trackerCreationViewController = TrackerCreationViewController()
         guard let trackerCreationViewController = trackerCreationViewController else { return }
         trackerCreationViewController.trackerType = .regular
         trackerCreationViewController.trackerStore = trackerStore
@@ -77,6 +78,7 @@ final class TrackerTypeViewController: UIViewController {
     }
 
     @objc private func addIrregularEvent() {
+        trackerCreationViewController = TrackerCreationViewController()
         guard let trackerCreationViewController = trackerCreationViewController else { return }
         trackerCreationViewController.trackerType = .irregular
         trackerCreationViewController.trackerStore = trackerStore
