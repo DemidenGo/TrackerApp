@@ -1,5 +1,5 @@
 //
-//  PageModel.swift
+//  OnboardingPage.swift
 //  TrackerApp
 //
 //  Created by Юрий Демиденко on 03.05.2023.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Pages: CaseIterable {
+enum OnboardingPage: CaseIterable {
     
     case first
     case second
@@ -18,6 +18,24 @@ enum Pages: CaseIterable {
             return 0
         case .second:
             return 1
+        }
+    }
+
+    var next: OnboardingPage {
+        switch self {
+        case .first:
+            return .second
+        case .second:
+            return .first
+        }
+    }
+
+    var previous: OnboardingPage {
+        switch self {
+        case .first:
+            return .second
+        case .second:
+            return .first
         }
     }
 
@@ -40,6 +58,4 @@ enum Pages: CaseIterable {
     }
 
     var loginButtonTitle: String { "Вот это технологии!" }
-
-    static var loginButtonTapAction: (() -> Void)?
 }

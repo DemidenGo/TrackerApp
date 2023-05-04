@@ -11,7 +11,6 @@ final class CategoriesViewController: UIViewController {
 
     var callback: ((String?) -> ())?
     var viewModel: CategoriesViewModelProtocol?
-    var newCategoryViewController: NewCategoryViewController?
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -101,8 +100,7 @@ final class CategoriesViewController: UIViewController {
     }
 
     @objc private func addCategoryButtonAction() {
-        newCategoryViewController = NewCategoryViewController()
-        guard let newCategoryViewController = newCategoryViewController else { return }
+        let newCategoryViewController = NewCategoryViewController()
         newCategoryViewController.presentationController?.delegate = newCategoryViewController
         newCategoryViewController.callback = { [weak self] category in
             guard let category = category else { return }

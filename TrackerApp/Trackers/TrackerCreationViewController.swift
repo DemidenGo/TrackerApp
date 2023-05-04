@@ -10,12 +10,8 @@ import UIKit
 final class TrackerCreationViewController: UIViewController {
 
     var trackerStore: TrackerStoreProtocol?
-    var categoriesViewController: CategoriesViewController?
-    var scheduleViewController: ScheduleViewController?
-
     var trackerType: TrackerType?
-    var dismissPreviousControllerCallback: (() -> Void)?
-    var swipeCallback: (() -> Void)?
+    var callback: (() -> Void)?
 
     private var selectedTrackerName: String?
     private var selectedCategory: String?
@@ -172,9 +168,7 @@ final class TrackerCreationViewController: UIViewController {
 
     @objc private func closeControllerAction() {
         dismiss(animated: true) { [weak self] in
-            self?.refreshViews()
-            self?.setToNilTemporaryValues()
-            self?.dismissPreviousControllerCallback?()
+            self?.callback?()
         }
     }
 
@@ -203,24 +197,6 @@ final class TrackerCreationViewController: UIViewController {
         createButton.backgroundColor = .interfaceGray
     }
 
-    private func setToNilTemporaryValues() {
-        selectedTrackerName = nil
-        selectedCategory = nil
-        selectedSchedule = nil
-        selectedEmoji = nil
-        selectedColor = nil
-    }
-
-    private func refreshViews() {
-        trackerNameTextField.text = nil
-        setCategoryButtonTitle()
-        setScheduleButtonTitle()
-        deselectEmoji()
-        deselectColor()
-        createButton.backgroundColor = .interfaceGray
-        scrollView.contentOffset = .zero
-    }
-
     private func setCategoryButtonTitle(with additionalText: String? = nil) {
         let categoryButton = buttonsTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ButtonTableCell
         if let additionalText = additionalText {
@@ -236,18 +212,6 @@ final class TrackerCreationViewController: UIViewController {
             scheduleButton?.set(label: "Расписание", additionalText: additionalText)
         } else {
             scheduleButton?.set(label: "Расписание")
-        }
-    }
-
-    private func deselectEmoji() {
-        if let emojiIndex = emojies.firstIndex(where: { $0 == selectedEmoji }) {
-            emojiCollectionView.deselectItem(at: IndexPath(row: emojiIndex, section: 0), animated: true)
-        }
-    }
-
-    private func deselectColor() {
-        if let colorIndex = colors.firstIndex(where: { $0 == selectedColor }) {
-            colorCollectionView.deselectItem(at: IndexPath(row: colorIndex, section: 0), animated: true)
         }
     }
 
@@ -373,8 +337,7 @@ final class TrackerCreationViewController: UIViewController {
 
     private func tapCategoriesAction() {
         let categoriesViewModel = CategoriesViewModel()
-        categoriesViewController = CategoriesViewController(viewModel: categoriesViewModel)
-        guard let categoriesViewController = categoriesViewController else { return }
+        let categoriesViewController = CategoriesViewController(viewModel: categoriesViewModel)
         categoriesViewController.callback = { [weak self] categoryName in
             guard let categoryName = categoryName else {
                 self?.setCategoryButtonTitle()
@@ -391,8 +354,7 @@ final class TrackerCreationViewController: UIViewController {
     }
 
     private func tapScheduleAction() {
-        scheduleViewController = ScheduleViewController()
-        guard let scheduleViewController = scheduleViewController else { return }
+        let scheduleViewController = ScheduleViewController()
         scheduleViewController.callback = { [weak self] selectedSchedule in
             guard !selectedSchedule.isEmpty else {
                 self?.setScheduleButtonTitle()
@@ -554,16 +516,5 @@ extension TrackerCreationViewController: UICollectionViewDataSource {
             cell.setLabel(color: colors[indexPath.row])
             return cell
         }
-    }
-}
-
-// MARK: - UIAdaptivePresentationControllerDelegate
-
-extension TrackerCreationViewController: UIAdaptivePresentationControllerDelegate {
-
-    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-        refreshViews()
-        setToNilTemporaryValues()
-        swipeCallback?()
     }
 }

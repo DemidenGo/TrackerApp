@@ -7,10 +7,14 @@
 
 import UIKit
 
+enum TrackerType {
+    case regular
+    case irregular
+}
+
 final class TrackerTypeViewController: UIViewController {
 
     var trackerStore: TrackerStoreProtocol?
-    var trackerCreationViewController: TrackerCreationViewController?
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -23,13 +27,13 @@ final class TrackerTypeViewController: UIViewController {
 
     private lazy var regularEventButton: UIButton = {
         let button = makeButton(title: "Привычка")
-        button.addTarget(self, action: #selector(addRegularEvent), for: .touchUpInside)
+        button.addTarget(self, action: #selector(addRegularTracker), for: .touchUpInside)
         return button
     }()
 
     private lazy var irregularEventButton: UIButton = {
         let button = makeButton(title: "Нерегулярное событие")
-        button.addTarget(self, action: #selector(addIrregularEvent), for: .touchUpInside)
+        button.addTarget(self, action: #selector(addIrregularTracker), for: .touchUpInside)
         return button
     }()
 
@@ -61,41 +65,20 @@ final class TrackerTypeViewController: UIViewController {
         return button
     }
 
-    @objc private func addRegularEvent() {
-        trackerCreationViewController = TrackerCreationViewController()
-        guard let trackerCreationViewController = trackerCreationViewController else { return }
-        trackerCreationViewController.trackerType = .regular
-        trackerCreationViewController.trackerStore = trackerStore
-        trackerCreationViewController.presentationController?.delegate = trackerCreationViewController
-        trackerCreationViewController.swipeCallback = { [weak self] in
-            self?.resetTrackerCreationViewController()
-        }
-        trackerCreationViewController.dismissPreviousControllerCallback = { [weak self] in
-            self?.resetTrackerCreationViewController()
-            self?.dismiss(animated: true)
-        }
-        present(trackerCreationViewController, animated: true)
+    @objc private func addRegularTracker() {
+        presentViewController(newTracker: .regular)
     }
 
-    @objc private func addIrregularEvent() {
-        trackerCreationViewController = TrackerCreationViewController()
-        guard let trackerCreationViewController = trackerCreationViewController else { return }
-        trackerCreationViewController.trackerType = .irregular
-        trackerCreationViewController.trackerStore = trackerStore
-        trackerCreationViewController.presentationController?.delegate = trackerCreationViewController
-        trackerCreationViewController.swipeCallback = { [weak self] in
-            self?.resetTrackerCreationViewController()
-        }
-        trackerCreationViewController.dismissPreviousControllerCallback = { [weak self] in
-            self?.resetTrackerCreationViewController()
-            self?.dismiss(animated: true)
-        }
-        present(trackerCreationViewController, animated: true)
+    @objc private func addIrregularTracker() {
+        presentViewController(newTracker: .irregular)
     }
 
-    private func resetTrackerCreationViewController() {
-        trackerCreationViewController = nil
-        trackerCreationViewController = TrackerCreationViewController()
+    private func presentViewController(newTracker type: TrackerType) {
+        let viewController = TrackerCreationViewController()
+        viewController.trackerType = type
+        viewController.trackerStore = trackerStore
+        viewController.callback = { [weak self] in self?.dismiss(animated: true) }
+        present(viewController, animated: true)
     }
 
     private func setupConstraints() {

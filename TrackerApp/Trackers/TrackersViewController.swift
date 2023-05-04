@@ -9,7 +9,6 @@ import UIKit
 
 final class TrackersViewController: UIViewController {
 
-    var trackerTypeViewController: TrackerTypeViewController?
     lazy var trackerStore: TrackerStoreProtocol = TrackerStore(delegate: self)
     lazy var recordsStore: RecordStoreProtocol = RecordStore()
     private var currentDate = Date().startOfDay
@@ -131,8 +130,7 @@ final class TrackersViewController: UIViewController {
     }
 
     @objc private func addNewTracker() {
-        trackerTypeViewController = TrackerTypeViewController()
-        guard let trackerTypeViewController = trackerTypeViewController else { return }
+        let trackerTypeViewController = TrackerTypeViewController()
         trackerTypeViewController.trackerStore = trackerStore
         present(trackerTypeViewController, animated: true)
     }

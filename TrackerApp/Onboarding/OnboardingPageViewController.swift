@@ -1,5 +1,5 @@
 //
-//  PageView.swift
+//  OnboardingPageViewController.swift
 //  TrackerApp
 //
 //  Created by Юрий Демиденко on 03.05.2023.
@@ -7,9 +7,10 @@
 
 import UIKit
 
-final class PageView: UIViewController {
+final class OnboardingPageViewController: UIViewController {
 
-    var page: Pages
+    let page: OnboardingPage
+    private let finishOnboardingAction: () -> Void
 
     private var onboardingLabelIndent: CGFloat { UIScreen.main.bounds.height <= 667 ? 27 : 64 }
     private var loginButtonIndent: CGFloat { UIScreen.main.bounds.height <= 667 ? 50 : 84 }
@@ -48,15 +49,16 @@ final class PageView: UIViewController {
     private lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
         pageControl.translatesAutoresizingMaskIntoConstraints = false
-        pageControl.numberOfPages = Pages.allCases.count
+        pageControl.numberOfPages = OnboardingPage.allCases.count
         pageControl.currentPage = page.index
         pageControl.currentPageIndicatorTintColor = .black
         pageControl.pageIndicatorTintColor = .interfaceGray
         return pageControl
     }()
 
-    init(with page: Pages) {
+    init(with page: OnboardingPage, finishOnboarding action: @escaping () -> Void) {
         self.page = page
+        self.finishOnboardingAction = action
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -70,8 +72,7 @@ final class PageView: UIViewController {
     }
 
     @objc private func loginButtonTapAction() {
-        guard let action = Pages.loginButtonTapAction else { return }
-        action()
+        finishOnboardingAction()
     }
 
     private func setupConstraints() {
