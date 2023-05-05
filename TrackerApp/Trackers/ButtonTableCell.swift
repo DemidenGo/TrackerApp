@@ -28,10 +28,14 @@ final class ButtonTableCell: UITableViewCell {
 
     override func prepareForReuse() {
         accessoryType = .none
+        layer.cornerRadius = 0
+        selectedBackgroundView?.layer.cornerRadius = 0
+        separatorInset = .init(top: 0, left: 16, bottom: 0, right: 16)
     }
 
     private func setupCell() {
         backgroundColor = .backgroundColor
+        selectionStyle = .none
         separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
     }
 

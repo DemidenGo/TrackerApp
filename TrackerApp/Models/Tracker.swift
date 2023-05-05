@@ -14,7 +14,3 @@ struct Tracker: Codable {
     let emoji: String
     let schedule: Set<WeekDay>
 }
-
-enum TrackerType {
-    case regular, irregular
-}
