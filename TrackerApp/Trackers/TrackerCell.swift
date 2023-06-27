@@ -25,7 +25,7 @@ final class TrackerCell: UICollectionViewCell {
     private lazy var trackerEmojiLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "YSDisplay-Medium", size: 13)
+        label.font = UIFont(name: Fonts.medium, size: 13)
         label.backgroundColor = UIColor(white: 1.0, alpha: 0.3)
         label.layer.cornerRadius = 12
         label.layer.masksToBounds = true
@@ -36,7 +36,7 @@ final class TrackerCell: UICollectionViewCell {
     private lazy var trackerNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "YSDisplay-Medium", size: 12)
+        label.font = UIFont(name: Fonts.medium, size: 12)
         label.textColor = .white
         label.numberOfLines = 2
         return label
@@ -45,7 +45,7 @@ final class TrackerCell: UICollectionViewCell {
     private lazy var dayCounterLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "YSDisplay-Medium", size: 12)
+        label.font = UIFont(name: Fonts.medium, size: 12)
         return label
     }()
 
@@ -111,19 +111,20 @@ final class TrackerCell: UICollectionViewCell {
     }
 
     func set(_ dayCounter: Int) {
-        dayCounterLabel.text = dayCounter.days
+        let daysTitle = String.localizedStringWithFormat(L10n.Trackers.trackedDaysTitle, dayCounter)
+        dayCounterLabel.text = "\(dayCounter) " + daysTitle
     }
 
     func buttonSetPlus() {
         let symbolConfig = UIImage.SymbolConfiguration(scale: .small)
-        let plusImage = UIImage(systemName: "plus", withConfiguration: symbolConfig)
+        let plusImage = UIImage(systemName: Images.Trackers.plus, withConfiguration: symbolConfig)
         increaseDayCounterButton.setImage(plusImage, for: .normal)
         increaseDayCounterButton.backgroundColor = increaseDayCounterButton.backgroundColor?.withAlphaComponent(1.0)
     }
 
     func buttonSetCheckmark() {
         let symbolConfig = UIImage.SymbolConfiguration(pointSize: 16, weight: .bold, scale: .small)
-        let checkmarkImage = UIImage(systemName: "checkmark", withConfiguration: symbolConfig)
+        let checkmarkImage = UIImage(systemName: Images.Trackers.checkmark, withConfiguration: symbolConfig)
         increaseDayCounterButton.setImage(checkmarkImage, for: .normal)
         increaseDayCounterButton.backgroundColor = increaseDayCounterButton.backgroundColor?.withAlphaComponent(0.3)
     }

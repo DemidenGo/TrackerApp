@@ -29,7 +29,7 @@ final class RecordStore: NSObject {
 extension RecordStore: RecordStoreProtocol {
 
     func save(_ record: TrackerRecord) throws {
-        let requestTracker = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
+        let requestTracker = NSFetchRequest<TrackerCoreData>(entityName: Constants.trackerCoreData)
         requestTracker.returnsObjectsAsFaults = false
         requestTracker.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCoreData.trackerID), record.id)
         let trackerCoreData = try? context.fetch(requestTracker)
@@ -40,7 +40,7 @@ extension RecordStore: RecordStoreProtocol {
     }
 
     func delete(_ record: TrackerRecord) throws {
-        let requestRecord = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        let requestRecord = NSFetchRequest<TrackerRecordCoreData>(entityName: Constants.trackerRecordCoreData)
         requestRecord.returnsObjectsAsFaults = false
         requestRecord.predicate = NSPredicate(format: "%K == %@ AND %K == %@", #keyPath(TrackerRecordCoreData.tracker.trackerID), record.id, #keyPath(TrackerRecordCoreData.date), record.date as CVarArg)
         guard let recordCoreData = try? context.fetch(requestRecord).first else {

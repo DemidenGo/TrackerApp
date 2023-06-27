@@ -10,11 +10,11 @@ import UIKit
 let weekDayDateFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateFormat = "EEEE"
-    formatter.locale = Locale(identifier: "ru")
+    formatter.locale = Locale(identifier: "en")
     return formatter
 }()
 
 extension Date {
-    var weekDayString: String { weekDayDateFormatter.string(from: self) }
+    var weekDayString: String { weekDayDateFormatter.string(from: self).lowercased() }
     var startOfDay: Date { Calendar.current.startOfDay(for: self) }
 }

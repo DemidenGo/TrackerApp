@@ -15,8 +15,8 @@ final class CategoriesViewController: UIViewController {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Категория"
-        label.font = UIFont(name: "YSDisplay-Medium", size: 16)
+        label.text = L10n.Trackers.categoryTitle
+        label.font = UIFont(name: Fonts.medium, size: 16)
         label.textAlignment = .center
         return label
     }()
@@ -24,15 +24,15 @@ final class CategoriesViewController: UIViewController {
     private lazy var stubImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "StarIcon")
+        imageView.image = UIImage(named: Images.Trackers.emptyState)
         return imageView
     }()
 
     private lazy var stubLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Привычки и события можно\nобъединить по смыслу"
-        label.font = UIFont(name: "YSDisplay-Medium", size: 12)
+        label.text = L10n.Trackers.emptyCategoriesTitle
+        label.font = UIFont(name: Fonts.medium, size: 12)
         label.numberOfLines = 2
         label.textAlignment = .center
         return label
@@ -42,8 +42,8 @@ final class CategoriesViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .black
-        button.setTitle("Добавить категорию", for: .normal)
-        button.titleLabel?.font = UIFont(name: "YSDisplay-Medium", size: 16)
+        button.setTitle(L10n.Trackers.addCategoryTitle, for: .normal)
+        button.titleLabel?.font = UIFont(name: Fonts.medium, size: 16)
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true

@@ -13,26 +13,18 @@ extension Array<String> {
         var sortedArrayOfDays = ["", "", "", "", "", "", ""]
         for value in self {
             switch value {
-            case "Пн":
-                sortedArrayOfDays[0] = value
-            case "Вт":
-                sortedArrayOfDays[1] = value
-            case "Ср":
-                sortedArrayOfDays[2] = value
-            case "Чт":
-                sortedArrayOfDays[3] = value
-            case "Пт":
-                sortedArrayOfDays[4] = value
-            case "Сб":
-                sortedArrayOfDays[5] = value
-            case "Вс":
-                sortedArrayOfDays[6] = value
-            default:
-                preconditionFailure("The elements of the array must all be day names")
+            case L10n.Weekdays.mondayShortTitle: sortedArrayOfDays[0] = value
+            case L10n.Weekdays.tuesdayShortTitle: sortedArrayOfDays[1] = value
+            case L10n.Weekdays.wednesdayShortTitle: sortedArrayOfDays[2] = value
+            case L10n.Weekdays.thursdayShortTitle: sortedArrayOfDays[3] = value
+            case L10n.Weekdays.fridayShortTitle: sortedArrayOfDays[4] = value
+            case L10n.Weekdays.saturdayShortTitle: sortedArrayOfDays[5] = value
+            case L10n.Weekdays.sundayShortTitle: sortedArrayOfDays[6] = value
+            default: preconditionFailure("The elements of the array must all be day names")
             }
         }
         sortedArrayOfDays.removeAll { $0 == "" }
-        return sortedArrayOfDays.count == 7 ? "Каждый день" : sortedArrayOfDays.joined(separator: ", ")
+        return sortedArrayOfDays.count == 7 ? L10n.Weekdays.everyDayTitle : sortedArrayOfDays.joined(separator: ", ")
     }
 }
 

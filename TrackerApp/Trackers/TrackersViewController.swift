@@ -17,7 +17,7 @@ final class TrackersViewController: UIViewController {
     private lazy var addButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        let buttonImage = UIImage(named: "AddButton")
+        let buttonImage = UIImage(named: Images.Trackers.addButton)
         button.setImage(buttonImage, for: .normal)
         button.addTarget(self, action: #selector(addNewTracker), for: .touchUpInside)
         return button
@@ -26,8 +26,8 @@ final class TrackersViewController: UIViewController {
     private lazy var mainLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Трекеры"
-        label.font = UIFont(name: "YSDisplay-Bold", size: 34)   
+        label.text = L10n.Trackers.trackersTitle
+        label.font = UIFont(name: Fonts.bold, size: 34)   
         return label
     }()
 
@@ -36,7 +36,7 @@ final class TrackersViewController: UIViewController {
         datePicker.translatesAutoresizingMaskIntoConstraints = false
         datePicker.preferredDatePickerStyle = .compact
         datePicker.datePickerMode = .date
-        datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.locale = Locale.current
         datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
         datePicker.calendar = Calendar(identifier: .iso8601)
         return datePicker
@@ -45,8 +45,8 @@ final class TrackersViewController: UIViewController {
     private lazy var searchTextField: UISearchTextField = {
         let textField = UISearchTextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.font = UIFont(name: "YSDisplay-Regular", size: 17)
-        textField.placeholder = "Поиск"
+        textField.font = UIFont(name: Fonts.regular, size: 17)
+        textField.placeholder = L10n.Trackers.searchFieldPlaceholder
         textField.delegate = self
         return textField
     }()
@@ -54,15 +54,15 @@ final class TrackersViewController: UIViewController {
     private lazy var stubImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "StarIcon")
+        imageView.image = UIImage(named: Images.Trackers.emptyState)
         return imageView
     }()
 
     private lazy var stubLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Что будем отслеживать?"
-        label.font = UIFont(name: "YSDisplay-Medium", size: 12)
+        label.text = L10n.Trackers.emptyStateTitle
+        label.font = UIFont(name: Fonts.medium, size: 12)
         return label
     }()
 
@@ -147,8 +147,8 @@ final class TrackersViewController: UIViewController {
         trackersCollectionView.isHidden = trackerStore.numberOfSections == 0 ? true : false
         trackersCollectionView.contentOffset = CGPoint(x: 0, y: -24)
         if trackerStore.numberOfSections == 0 {
-            stubImageView.image = UIImage(named: "NothingFoundIcon")
-            stubLabel.text = "Ничего не найдено"
+            stubImageView.image = UIImage(named: Images.Trackers.nothingFound)
+            stubLabel.text = L10n.Trackers.nothingFoundTitle
         }
     }
 

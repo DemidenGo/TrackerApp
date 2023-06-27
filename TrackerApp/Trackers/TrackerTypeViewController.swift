@@ -19,20 +19,20 @@ final class TrackerTypeViewController: UIViewController {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Создание трекера"
-        label.font = UIFont(name: "YSDisplay-Medium", size: 16)
+        label.text = L10n.Trackers.trackerCreationTitle
+        label.font = UIFont(name: Fonts.medium, size: 16)
         label.textAlignment = .center
         return label
     }()
 
     private lazy var regularEventButton: UIButton = {
-        let button = makeButton(title: "Привычка")
+        let button = makeButton(title: L10n.Trackers.regularTrackerTitle)
         button.addTarget(self, action: #selector(addRegularTracker), for: .touchUpInside)
         return button
     }()
 
     private lazy var irregularEventButton: UIButton = {
-        let button = makeButton(title: "Нерегулярное событие")
+        let button = makeButton(title: L10n.Trackers.irregularTrackerTitle)
         button.addTarget(self, action: #selector(addIrregularTracker), for: .touchUpInside)
         return button
     }()
@@ -61,7 +61,7 @@ final class TrackerTypeViewController: UIViewController {
         button.layer.masksToBounds = true
         button.setTitle(title, for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = UIFont(name: "YSDisplay-Medium", size: 16)
+        button.titleLabel?.font = UIFont(name: Fonts.medium, size: 16)
         return button
     }
 

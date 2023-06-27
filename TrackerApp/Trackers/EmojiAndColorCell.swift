@@ -37,7 +37,7 @@ final class EmojiAndColorCell: UICollectionViewCell {
 
     func setLabel(text: String) {
         label.text = text
-        label.font = UIFont(name: "YSDisplay-Bold", size: 32)
+        label.font = UIFont(name: Fonts.bold, size: 32)
     }
 
     func setLabel(color: UIColor) {

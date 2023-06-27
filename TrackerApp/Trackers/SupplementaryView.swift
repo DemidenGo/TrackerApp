@@ -12,7 +12,7 @@ final class SupplementaryView: UICollectionReusableView {
     private lazy var sectionTitle: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "YSDisplay-Bold", size: 19)
+        label.font = UIFont(name: Fonts.bold, size: 19)
         return label
     }()
 

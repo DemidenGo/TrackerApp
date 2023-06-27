@@ -1,0 +1,48 @@
+/* 
+  Localizable.strings
+  TrackerApp
+
+  Created by Юрий Демиденко on 26.06.2023.
+  
+*/
+
+firstOnboardingMessage = "Track only what you want";
+secondOnboardingMessage = "Even if it's not liters of water and yoga";
+loginTitle = "These are technologies!";
+trackersTitle = "Trackers";
+statisticsTitle = "Statistics";
+searchTitle = "Search";
+stubTitle = "What will you track?";
+nothingFoundTitle = "Nothing found";
+trackerCreationTitle = "Creating tracker";
+regularTrackerTitle = "Regular event";
+irregularTrackerTitle = "Irregular event";
+newRegularTrackerTitle = "New regular tracker";
+trackerNamePlaceholder = "Enter tracker name";
+emojiTitle = "Emoji";
+colorTitle = "Color";
+cancelTitle = "Cancel";
+createTitle = "Create";
+charLimitTitle = "Limit of 38 characters";
+categoryTitle = "Category";
+scheduleTitle = "Schedule";
+emptyCategoriesTitle = "Habits and events can be\ncombined in meaning";
+addCategoryTitle = "Add category";
+newCategoryTitle = "New category";
+categoryNamePlaceholder = "Enter category name";
+doneTitle = "Done";
+mondayTitle = "monday";
+tuesdayTitle = "tuesday";
+wednesdayTitle = "wednesday";
+thursdayTitle = "thursday";
+fridayTitle = "friday";
+saturdayTitle = "saturday";
+sundayTitle = "sunday";
+mondayShortTitle = "Mo";
+tuesdayShortTitle = "Tu";
+wednesdayShortTitle = "We";
+thursdayShortTitle = "Th";
+fridayShortTitle = "Fr";
+saturdayShortTitle = "Sa";
+sundayShortTitle = "Su";
+everyDayTitle = "Every day";

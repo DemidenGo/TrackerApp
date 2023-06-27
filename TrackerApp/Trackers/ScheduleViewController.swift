@@ -15,8 +15,8 @@ final class ScheduleViewController: UIViewController {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Расписание"
-        label.font = UIFont(name: "YSDisplay-Medium", size: 16)
+        label.text = L10n.Trackers.scheduleTitle
+        label.font = UIFont(name: Fonts.medium, size: 16)
         label.textAlignment = .center
         return label
     }()
@@ -37,8 +37,8 @@ final class ScheduleViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .black
-        button.setTitle("Готово", for: .normal)
-        button.titleLabel?.font = UIFont(name: "YSDisplay-Medium", size: 16)
+        button.setTitle(L10n.Trackers.doneTitle, for: .normal)
+        button.titleLabel?.font = UIFont(name: Fonts.medium, size: 16)
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
@@ -112,7 +112,8 @@ extension ScheduleViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableCell.identifier) as? ButtonTableCell else { return UITableViewCell() }
-        cell.set(label: WeekDay.allCases[indexPath.row].rawValue.capitalized)
+        let weekDay = WeekDay.allCases[indexPath.row]
+        cell.set(label: weekDay.localizedString.capitalized)
         if indexPath.row == WeekDay.allCases.count - 1 {
             cell.separatorInset = .init(top: 0, left: UIScreen.main.bounds.width, bottom: 0, right: 0)
         }

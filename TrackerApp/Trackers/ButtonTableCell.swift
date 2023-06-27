@@ -12,7 +12,7 @@ final class ButtonTableCell: UITableViewCell {
     lazy var label: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "YSDisplay-Regular", size: 17)
+        label.font = UIFont(name: Fonts.regular, size: 17)
         return label
     }()
 

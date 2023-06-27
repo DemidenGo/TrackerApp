@@ -33,12 +33,11 @@ final class TrackerCreationViewController: UIViewController {
     private lazy var buttonsTableViewHeight: CGFloat = 150
     private lazy var offset: CGFloat = 38
 
-    private let emojies: [String] = ["🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪"]
+    private let emojies = Constants.emojies
 
     private lazy var colors: [UIColor] = {
-        let baseColorName = "Color "
         var colorStringArray = [String]()
-        (0...17).forEach { colorStringArray.append(baseColorName + String($0)) }
+        (0...17).forEach { colorStringArray.append(Constants.baseColorName + String($0)) }
         var colorsUIArray = [UIColor]()
         colorStringArray.forEach { colorsUIArray.append(UIColor(named: $0) ?? .gray) }
         return colorsUIArray
@@ -59,8 +58,8 @@ final class TrackerCreationViewController: UIViewController {
     private lazy var mainTitleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Новая привычка"
-        label.font = UIFont(name: "YSDisplay-Medium", size: 16)
+        label.text = L10n.Trackers.newRegularTrackerTitle
+        label.font = UIFont(name: Fonts.medium, size: 16)
         label.textAlignment = .center
         return label
     }()
@@ -71,8 +70,8 @@ final class TrackerCreationViewController: UIViewController {
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
         textField.backgroundColor = .backgroundColor
-        textField.placeholder = "Введите название трекера"
-        textField.font = UIFont(name: "YSDisplay-Regular", size: 17)
+        textField.placeholder = L10n.Trackers.trackerNamePlaceholder
+        textField.font = UIFont(name: Fonts.regular, size: 17)
         textField.makeIndent(points: 16)
         textField.delegate = self
         textField.returnKeyType = .done
@@ -93,8 +92,8 @@ final class TrackerCreationViewController: UIViewController {
         return tableView
     }()
 
-    private lazy var emojiLabel: UILabel = makeLabel(text: "Emoji")
-    private lazy var colorLabel: UILabel = makeLabel(text: "Цвет")
+    private lazy var emojiLabel: UILabel = makeLabel(text: L10n.Trackers.emojiTitle)
+    private lazy var colorLabel: UILabel = makeLabel(text: L10n.Trackers.colorTitle)
 
     private lazy var emojiCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -132,7 +131,7 @@ final class TrackerCreationViewController: UIViewController {
 
     private lazy var cancelButton: UIButton = {
         let button = makeButton()
-        button.setTitle("Отменить", for: .normal)
+        button.setTitle(L10n.Trackers.cancelTitle, for: .normal)
         button.setTitleColor(.buttonRed, for: .normal)
         button.backgroundColor = .white
         button.layer.borderWidth = 1
@@ -143,7 +142,7 @@ final class TrackerCreationViewController: UIViewController {
 
     private lazy var createButton: UIButton = {
         let button = makeButton()
-        button.setTitle("Создать", for: .normal)
+        button.setTitle(L10n.Trackers.createTitle, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .interfaceGray
         button.addTarget(self, action: #selector(createAction), for: .touchUpInside)
@@ -153,8 +152,8 @@ final class TrackerCreationViewController: UIViewController {
     private lazy var charactersLimitLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Ограничение 38 символов"
-        label.font = UIFont(name: "YSDisplay-Regular", size: 17)
+        label.text = L10n.Trackers.charLimitTitle
+        label.font = UIFont(name: Fonts.regular, size: 17)
         label.textColor = .buttonRed
         label.alpha = 0.0
         return label
@@ -200,18 +199,18 @@ final class TrackerCreationViewController: UIViewController {
     private func setCategoryButtonTitle(with additionalText: String? = nil) {
         let categoryButton = buttonsTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ButtonTableCell
         if let additionalText = additionalText {
-            categoryButton?.set(label: "Категория", additionalText: additionalText)
+            categoryButton?.set(label: L10n.Trackers.categoryTitle, additionalText: additionalText)
         } else {
-            categoryButton?.set(label: "Категория")
+            categoryButton?.set(label: L10n.Trackers.categoryTitle)
         }
     }
 
     private func setScheduleButtonTitle(with additionalText: String? = nil) {
         let scheduleButton = buttonsTableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? ButtonTableCell
         if let additionalText = additionalText {
-            scheduleButton?.set(label: "Расписание", additionalText: additionalText)
+            scheduleButton?.set(label: L10n.Trackers.scheduleTitle, additionalText: additionalText)
         } else {
-            scheduleButton?.set(label: "Расписание")
+            scheduleButton?.set(label: L10n.Trackers.scheduleTitle)
         }
     }
 
@@ -322,14 +321,14 @@ final class TrackerCreationViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = text
-        label.font = UIFont(name: "YSDisplay-Bold", size: 19)
+        label.font = UIFont(name: Fonts.bold, size: 19)
         return label
     }
 
     private func makeButton() -> UIButton {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.titleLabel?.font = UIFont(name: "YSDisplay-Medium", size: 16)
+        button.titleLabel?.font = UIFont(name: Fonts.medium, size: 16)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         return button
@@ -362,7 +361,7 @@ final class TrackerCreationViewController: UIViewController {
                 self?.deactivateCreateButton()
                 return
             }
-            let additionalText = selectedSchedule.map { $0.inShortStyleString }
+            let additionalText = selectedSchedule.map { $0.localizedStringInShortStyle }
             self?.setScheduleButtonTitle(with: additionalText.sortByWeekDaysString)
             self?.selectedSchedule = selectedSchedule
             self?.activateCreateButton()
@@ -429,9 +428,9 @@ extension TrackerCreationViewController: UITableViewDataSource {
         guard let cell = buttonsTableView.dequeueReusableCell(withIdentifier: ButtonTableCell.identifier) as? ButtonTableCell else { return UITableViewCell() }
         cell.accessoryType = .disclosureIndicator
         if indexPath.row == 0 {
-            cell.set(label: "Категория")
+            cell.set(label: L10n.Trackers.categoryTitle)
         } else {
-            cell.set(label: "Расписание")
+            cell.set(label: L10n.Trackers.scheduleTitle)
             cell.separatorInset = .init(top: 0, left: UIScreen.main.bounds.width, bottom: 0, right: 0)
         }
         return cell

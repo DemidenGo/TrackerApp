@@ -20,8 +20,8 @@ final class TrackerStore: NSObject {
 
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let fetchRequest = TrackerCoreData.fetchRequest()
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "category.title", ascending: true),
-                                        NSSortDescriptor(key: "name", ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: Constants.sortTrackersByCategoryKey, ascending: true),
+                                        NSSortDescriptor(key: Constants.sortTrackersByNameKey, ascending: true)]
         fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCoreData.scheduleString), "\(Date().startOfDay.weekDayString)")
         let controller = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                     managedObjectContext: context,
@@ -154,7 +154,7 @@ extension TrackerStore: TrackerStoreProtocol {
     }
 
     func save(_ tracker: Tracker, in category: String) throws {
-        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: Constants.trackerCategoryCoreData)
         request.returnsObjectsAsFaults = false
         request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCategoryCoreData.title), category)
         let categoryCoreData = try? context.fetch(request)
@@ -176,7 +176,7 @@ extension TrackerStore: TrackerStoreProtocol {
 
     func trackersFor(_ currentDate: String, searchRequest: String?) {
         if let searchRequest = searchRequest {
-            fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@ AND %K CONTAINS[n] %@", #keyPath(TrackerCoreData.scheduleString), currentDate, #keyPath(TrackerCoreData.name), searchRequest)
+            fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@ AND %K CONTAINS[c] %@", #keyPath(TrackerCoreData.scheduleString), currentDate, #keyPath(TrackerCoreData.name), searchRequest)
         } else {
             fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCoreData.scheduleString), currentDate)
         }
