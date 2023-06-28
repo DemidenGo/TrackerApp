@@ -9,6 +9,7 @@ import UIKit
 
 final class TrackersViewController: UIViewController {
 
+    private let analyticsService: AnalyticsServiceProtocol
     lazy var trackerStore: TrackerStoreProtocol = TrackerStore(delegate: self)
     lazy var recordsStore: RecordStoreProtocol = RecordStore()
     private var currentDate = Date().startOfDay
@@ -81,10 +82,29 @@ final class TrackersViewController: UIViewController {
         return collectionView
     }()
 
+    init(analyticsService: AnalyticsServiceProtocol = AnalyticsService()) {
+        self.analyticsService = analyticsService
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViewController()
         setupConstraints()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        analyticsService.report(event: "open", params: ["main_screen": "viewDidAppear"])
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        analyticsService.report(event: "close", params: ["main_screen": "viewDidDisappear"])
     }
 
     private func setupViewController() {
@@ -133,6 +153,7 @@ final class TrackersViewController: UIViewController {
         let trackerTypeViewController = TrackerTypeViewController()
         trackerTypeViewController.trackerStore = trackerStore
         present(trackerTypeViewController, animated: true)
+        analyticsService.report(event: "click", params: ["main_screen": "add_track"])
     }
 
     @objc private func dateChanged() {
@@ -267,6 +288,7 @@ extension TrackersViewController: TrackerCellDelegate {
             deleteTrackerRecord(for: cell.trackerID)
         } else {
             saveTrackerRecord(for: cell.trackerID)
+            analyticsService.report(event: "click", params: ["main_screen": "track"])
         }
         delay = 1
     }
