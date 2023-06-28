@@ -54,7 +54,7 @@ final class TrackerCell: UICollectionViewCell {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 17
         button.layer.masksToBounds = true
-        button.tintColor = .white
+        button.tintColor = .viewBackgroundColor
         button.contentMode = .center
         button.addTarget(self, action: #selector(increaseDayCounter), for: .touchUpInside)
         return button
@@ -126,6 +126,6 @@ final class TrackerCell: UICollectionViewCell {
         let symbolConfig = UIImage.SymbolConfiguration(pointSize: 16, weight: .bold, scale: .small)
         let checkmarkImage = UIImage(systemName: Images.Trackers.checkmark, withConfiguration: symbolConfig)
         increaseDayCounterButton.setImage(checkmarkImage, for: .normal)
-        increaseDayCounterButton.backgroundColor = increaseDayCounterButton.backgroundColor?.withAlphaComponent(0.3)
+        increaseDayCounterButton.backgroundColor = increaseDayCounterButton.backgroundColor?.withAlphaComponent(0.5)
     }
 }

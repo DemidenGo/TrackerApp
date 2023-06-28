@@ -59,7 +59,7 @@ final class NewCategoryViewController: UIViewController {
     }
 
     private func setupViewController() {
-        view.backgroundColor = .white
+        view.backgroundColor = .viewBackgroundColor
         hideKeyboardByTap()
     }
 
@@ -91,12 +91,14 @@ final class NewCategoryViewController: UIViewController {
     }
 
     private func enableDoneButton() {
-        doneButton.backgroundColor = .black
+        doneButton.backgroundColor = .buttonColor
+        doneButton.setTitleColor(.viewBackgroundColor, for: .normal)
         doneButton.isUserInteractionEnabled = true
     }
 
     private func disableDoneButton() {
         doneButton.backgroundColor = .interfaceGray
+        doneButton.setTitleColor(.white, for: .normal)
         doneButton.isUserInteractionEnabled = false
     }
 }

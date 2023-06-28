@@ -41,10 +41,10 @@ final class CategoriesViewController: UIViewController {
     private lazy var addCategoryButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .black
+        button.backgroundColor = .buttonColor
         button.setTitle(L10n.Trackers.addCategoryTitle, for: .normal)
         button.titleLabel?.font = UIFont(name: Fonts.medium, size: 16)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.viewBackgroundColor, for: .normal)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(addCategoryButtonAction), for: .touchUpInside)
@@ -64,7 +64,7 @@ final class CategoriesViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .viewBackgroundColor
         setupConstraints()
         bind()
     }

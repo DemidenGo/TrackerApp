@@ -133,7 +133,7 @@ final class TrackerCreationViewController: UIViewController {
         let button = makeButton()
         button.setTitle(L10n.Trackers.cancelTitle, for: .normal)
         button.setTitleColor(.buttonRed, for: .normal)
-        button.backgroundColor = .white
+        button.backgroundColor = .viewBackgroundColor
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.buttonRed.cgColor
         button.addTarget(self, action: #selector(closeControllerAction), for: .touchUpInside)
@@ -188,12 +188,14 @@ final class TrackerCreationViewController: UIViewController {
 
     private func activateCreateButton() {
         guard isTrackerDataComplete else { return }
-        createButton.backgroundColor = .black
+        createButton.backgroundColor = .buttonColor
+        createButton.setTitleColor(.viewBackgroundColor, for: .normal)
     }
 
     private func deactivateCreateButton() {
         guard !isTrackerDataComplete else { return }
         createButton.backgroundColor = .interfaceGray
+        createButton.setTitleColor(.white, for: .normal)
     }
 
     private func setCategoryButtonTitle(with additionalText: String? = nil) {
@@ -232,7 +234,7 @@ final class TrackerCreationViewController: UIViewController {
     }
 
     private func setupViewController() {
-        view.backgroundColor = .white
+        view.backgroundColor = .viewBackgroundColor
         hideKeyboardByTap()
         if trackerType == .irregular {
             selectedSchedule = []

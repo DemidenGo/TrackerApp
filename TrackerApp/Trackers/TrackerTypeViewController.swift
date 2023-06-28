@@ -49,18 +49,18 @@ final class TrackerTypeViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .viewBackgroundColor
         setupConstraints()
     }
 
     private func makeButton(title: String) -> UIButton {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .black
+        button.backgroundColor = .buttonColor
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.setTitle(title, for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.viewBackgroundColor, for: .normal)
         button.titleLabel?.font = UIFont(name: Fonts.medium, size: 16)
         return button
     }

@@ -13,6 +13,11 @@ extension UIColor {
     static var interfaceGray: UIColor { UIColor(named: "InterfaceGray") ?? .systemGray2 }
     static var interfaceLightGray: UIColor { UIColor(named: "InterfaceLightGray") ?? .systemGray4 }
     static var buttonRed: UIColor { UIColor(named: "ButtonRed") ?? .red }
+    static let viewBackgroundColor = UIColor.systemBackground
+    static let buttonColor = UIColor { traits in
+        if traits.userInterfaceStyle == .light { return UIColor.black }
+        return UIColor.white
+    }
 }
 
 extension Decodable where Self: UIColor {

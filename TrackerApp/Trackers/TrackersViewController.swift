@@ -17,7 +17,7 @@ final class TrackersViewController: UIViewController {
     private lazy var addButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        let buttonImage = UIImage(named: Images.Trackers.addButton)
+        let buttonImage = UIImage(named: Images.Trackers.addButton)?.withTintColor(.label)
         button.setImage(buttonImage, for: .normal)
         button.addTarget(self, action: #selector(addNewTracker), for: .touchUpInside)
         return button
@@ -89,7 +89,7 @@ final class TrackersViewController: UIViewController {
 
     private func setupViewController() {
         hideKeyboardByTap()
-        view.backgroundColor = .white
+        view.backgroundColor = .viewBackgroundColor
     }
 
     private func setupConstraints() {

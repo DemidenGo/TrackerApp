@@ -52,7 +52,7 @@ final class ButtonTableCell: UITableViewCell {
         if let additionalText = additionalText {
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineSpacing = 2
-            let labelAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black,
+            let labelAttributes = [NSAttributedString.Key.foregroundColor : UIColor.label,
                                    NSAttributedString.Key.paragraphStyle : paragraphStyle]
             let additionalTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.interfaceGray]
             let labelText = NSMutableAttributedString(string: text, attributes: labelAttributes)
