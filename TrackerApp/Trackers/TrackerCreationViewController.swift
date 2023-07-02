@@ -10,14 +10,16 @@ import UIKit
 final class TrackerCreationViewController: UIViewController {
 
     var trackerStore: TrackerStoreProtocol?
-    var trackerType: TrackerType?
     var callback: (() -> Void)?
 
+    private let trackerType: TrackerType
     private var selectedTrackerName: String?
     private var selectedCategory: String?
     private var selectedSchedule: Set<WeekDay>?
     private var selectedEmoji: String?
     private var selectedColor: UIColor?
+    private var trackerID: String?
+    private var trackerNameTextFieldConstraint = NSLayoutConstraint()
 
     private var isTrackerDataComplete: Bool {
         let isTrackerNameSelect = selectedTrackerName != nil
@@ -58,9 +60,16 @@ final class TrackerCreationViewController: UIViewController {
     private lazy var mainTitleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = L10n.Trackers.newRegularTrackerTitle
         label.font = UIFont(name: Fonts.medium, size: 16)
         label.textAlignment = .center
+        return label
+    }()
+
+    private lazy var daysCounterLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: Fonts.bold, size: 32)
+        label.text = "TEST"
         return label
     }()
 
@@ -78,6 +87,7 @@ final class TrackerCreationViewController: UIViewController {
         textField.enablesReturnKeyAutomatically = true
         textField.clearButtonMode = .whileEditing
         textField.smartInsertDeleteType = .no
+        textField.text = selectedTrackerName
         return textField
     }()
 
@@ -159,10 +169,53 @@ final class TrackerCreationViewController: UIViewController {
         return label
     }()
 
+    init(trackerType: TrackerType) {
+        self.trackerType = trackerType
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupViewController()
         setupConstraints()
+        setupViewController()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        selectEmojiIfNeeded()
+        selectColorIfNeeded()
+    }
+
+    func edit(existing tracker: Tracker, in category: String, with dayCounter: Int) {
+        selectedCategory = category
+        selectedTrackerName = tracker.name
+        selectedSchedule = tracker.schedule
+        selectedEmoji = tracker.emoji
+        selectedColor = tracker.color
+        trackerID = tracker.id
+        let daysTitle = String.localizedStringWithFormat(L10n.Trackers.trackedDaysTitle, dayCounter)
+        daysCounterLabel.text = "\(dayCounter) " + daysTitle
+    }
+
+    private func selectEmojiIfNeeded() {
+        guard let emoji = selectedEmoji, let index = emojies.firstIndex(of: emoji) else { return }
+        let indexPath = IndexPath(row: index, section: 0)
+        emojiCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+        collectionView(emojiCollectionView, didSelectItemAt: indexPath)
+    }
+
+    private func selectColorIfNeeded() {
+        guard let color = selectedColor else { return }
+        let serializedColors = colors.map { UIColorMarshalling.serialize(color: $0) }
+        let deserializedColors = serializedColors.map { UIColorMarshalling.deserialize(hexString: $0) }
+        guard let index = deserializedColors.firstIndex(of: color) else { return }
+        let indexPath = IndexPath(row: index, section: 0)
+        colorCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+        collectionView(colorCollectionView, didSelectItemAt: indexPath)
     }
 
     @objc private func closeControllerAction() {
@@ -177,7 +230,13 @@ final class TrackerCreationViewController: UIViewController {
               let selectedSchedule = selectedSchedule,
               let selectedEmoji = selectedEmoji,
               let selectedColor = selectedColor else { return }
-        let newTracker = Tracker(id: UUID().uuidString,
+        let trackerID: String
+        if let existingTrackerID = self.trackerID {
+            trackerID = existingTrackerID
+        } else {
+            trackerID = UUID().uuidString
+        }
+        let newTracker = Tracker(id: trackerID,
                                  name: selectedTrackerName,
                                  color: selectedColor,
                                  emoji: selectedEmoji,
@@ -236,11 +295,19 @@ final class TrackerCreationViewController: UIViewController {
     private func setupViewController() {
         view.backgroundColor = .viewBackgroundColor
         hideKeyboardByTap()
-        if trackerType == .irregular {
+        switch trackerType {
+        case .regular:
+            mainTitleLabel.text = L10n.Trackers.newRegularTrackerTitle
+        case .irregular:
             selectedSchedule = []
             WeekDay.allCases.forEach { selectedSchedule?.insert($0) }
             buttonsTableViewHeight = 75
             buttonsTableView.separatorStyle = .none
+            mainTitleLabel.text = L10n.Trackers.newIrregularTrackerTitle
+        case .existing:
+            mainTitleLabel.text = L10n.Trackers.editTrackerTitle
+            trackerNameTextFieldConstraint.constant = 116
+            setupDaysCounterLabelConstraints()
         }
     }
 
@@ -257,6 +324,9 @@ final class TrackerCreationViewController: UIViewController {
          cancelButton,
          createButton].forEach { contentView.addSubview($0) }
 
+        trackerNameTextFieldConstraint = trackerNameTextField.topAnchor.constraint(equalTo: mainTitleLabel.bottomAnchor,
+                                                                                   constant: 38)
+
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -272,7 +342,7 @@ final class TrackerCreationViewController: UIViewController {
             mainTitleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 27),
             mainTitleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
 
-            trackerNameTextField.topAnchor.constraint(equalTo: mainTitleLabel.bottomAnchor, constant: 38),
+            trackerNameTextFieldConstraint,
             trackerNameTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             trackerNameTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             trackerNameTextField.heightAnchor.constraint(equalToConstant: 75),
@@ -316,6 +386,15 @@ final class TrackerCreationViewController: UIViewController {
         NSLayoutConstraint.activate([
             charactersLimitLabel.topAnchor.constraint(equalTo: trackerNameTextField.bottomAnchor, constant: 8),
             charactersLimitLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
+        ])
+    }
+
+    private func setupDaysCounterLabelConstraints() {
+        contentView.addSubview(daysCounterLabel)
+        NSLayoutConstraint.activate([
+            daysCounterLabel.topAnchor.constraint(equalTo: mainTitleLabel.bottomAnchor, constant: 38),
+            daysCounterLabel.bottomAnchor.constraint(equalTo: trackerNameTextField.topAnchor, constant: -40),
+            daysCounterLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
         ])
     }
 
@@ -417,12 +496,10 @@ extension TrackerCreationViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch trackerType {
-        case .regular:
+        case .regular, .existing:
             return 2
         case .irregular:
             return 1
-        case .none:
-            preconditionFailure("Error: need to select tracker type")
         }
     }
 
@@ -430,9 +507,10 @@ extension TrackerCreationViewController: UITableViewDataSource {
         guard let cell = buttonsTableView.dequeueReusableCell(withIdentifier: ButtonTableCell.identifier) as? ButtonTableCell else { return UITableViewCell() }
         cell.accessoryType = .disclosureIndicator
         if indexPath.row == 0 {
-            cell.set(label: L10n.Trackers.categoryTitle)
+            cell.set(label: L10n.Trackers.categoryTitle, additionalText: selectedCategory)
         } else {
-            cell.set(label: L10n.Trackers.scheduleTitle)
+            cell.set(label: L10n.Trackers.scheduleTitle,
+                     additionalText: selectedSchedule?.map { $0.localizedStringInShortStyle }.sortByWeekDaysString)
             cell.separatorInset = .init(top: 0, left: UIScreen.main.bounds.width, bottom: 0, right: 0)
         }
         return cell

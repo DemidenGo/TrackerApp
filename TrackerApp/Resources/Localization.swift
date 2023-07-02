@@ -26,6 +26,8 @@ enum L10n {
         static let regularTrackerTitle = NSLocalizedString("regularTrackerTitle", comment: "Regular tracker title")
         static let irregularTrackerTitle = NSLocalizedString("irregularTrackerTitle", comment: "Irregular tracker title")
         static let newRegularTrackerTitle = NSLocalizedString("newRegularTrackerTitle", comment: "New regular tracker title")
+        static let newIrregularTrackerTitle = NSLocalizedString("newIrregularTrackerTitle", comment: "New irregular tracker title")
+        static let editTrackerTitle = NSLocalizedString("editTrackerTitle", comment: "Tracker editing title")
         static let trackerNamePlaceholder = NSLocalizedString("trackerNamePlaceholder", comment: "Tracker name placeholder")
         static let emojiTitle = NSLocalizedString("emojiTitle", comment: "Emoji title")
         static let colorTitle = NSLocalizedString("colorTitle", comment: "Color title")
@@ -39,6 +41,9 @@ enum L10n {
         static let newCategoryTitle = NSLocalizedString("newCategoryTitle", comment: "New category title")
         static let categoryNamePlaceholder = NSLocalizedString("categoryNamePlaceholder", comment: "Category name placeholder")
         static let doneTitle = NSLocalizedString("doneTitle", comment: "Done button title")
+        static let pinTitle = NSLocalizedString("pinTitle", comment: "Pin tracker title")
+        static let editTitle = NSLocalizedString("editTitle", comment: "Edit tracker title")
+        static let deleteTitle = NSLocalizedString("deleteTitle", comment: "Delete tracker title")
     }
     enum Weekdays {
         // Full style

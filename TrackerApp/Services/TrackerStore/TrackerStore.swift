@@ -17,6 +17,7 @@ final class TrackerStore: NSObject {
     private lazy var updatedIndexPaths: [IndexPath] = []
     private lazy var insertedSections = IndexSet()
     private lazy var deletedSections = IndexSet()
+    private lazy var updatedSections = IndexSet()
 
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let fetchRequest = TrackerCoreData.fetchRequest()
@@ -50,6 +51,7 @@ final class TrackerStore: NSObject {
         updatedIndexPaths = []
         insertedSections = IndexSet()
         deletedSections = IndexSet()
+        updatedSections = IndexSet()
     }
 
     private func makeTracker(from trackerCoreData: TrackerCoreData) throws -> Tracker {
@@ -90,6 +92,26 @@ final class TrackerStore: NSObject {
         }
         return TrackerRecord(id: trackerID, date: date)
     }
+
+    private func retrieveTrackerCoreDataEntity(for tracker: Tracker) -> TrackerCoreData {
+        let requestTracker = NSFetchRequest<TrackerCoreData>(entityName: Constants.trackerCoreData)
+        requestTracker.returnsObjectsAsFaults = false
+        requestTracker.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCoreData.trackerID), tracker.id)
+        let trackerCoreData: TrackerCoreData
+        if let existingTrackerCoreData = try? context.fetch(requestTracker).first {
+            trackerCoreData = existingTrackerCoreData
+        } else {
+            trackerCoreData = TrackerCoreData(context: context)
+        }
+        return trackerCoreData
+    }
+
+    private func retrieveCategoryCoreDataEntity(for category: String) -> TrackerCategoryCoreData? {
+        let requestCategory = NSFetchRequest<TrackerCategoryCoreData>(entityName: Constants.trackerCategoryCoreData)
+        requestCategory.returnsObjectsAsFaults = false
+        requestCategory.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCategoryCoreData.title), category)
+        return try? context.fetch(requestCategory).first
+    }
 }
 
 // MARK: - NSFetchedResultsControllerDelegate
@@ -97,7 +119,7 @@ final class TrackerStore: NSObject {
 extension TrackerStore: NSFetchedResultsControllerDelegate {
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        delegate?.didUpdateTracker(insertedSections, deletedSections, updatedIndexPaths, insertedIndexPaths, deletedIndexPaths)
+        delegate?.didUpdateTracker(insertedSections, deletedSections,updatedSections, updatedIndexPaths, insertedIndexPaths, deletedIndexPaths)
         clearUpdatedIndexes()
     }
 
@@ -107,6 +129,8 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
             insertedSections.insert(sectionIndex)
         case .delete:
             deletedSections.insert(sectionIndex)
+        case .update:
+            updatedSections.insert(sectionIndex)
         default:
             break
         }
@@ -125,6 +149,11 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         case .update:
             if let indexPath = indexPath {
                 updatedIndexPaths.append(indexPath)
+            }
+        case .move:
+            if let indexPath = indexPath, let newindexPath = newIndexPath {
+                deletedIndexPaths.append(indexPath)
+                insertedIndexPaths.append(newindexPath)
             }
         default:
             break
@@ -154,17 +183,14 @@ extension TrackerStore: TrackerStoreProtocol {
     }
 
     func save(_ tracker: Tracker, in category: String) throws {
-        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: Constants.trackerCategoryCoreData)
-        request.returnsObjectsAsFaults = false
-        request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCategoryCoreData.title), category)
-        let categoryCoreData = try? context.fetch(request)
-        let trackerCoreData = TrackerCoreData(context: context)
+        let trackerCoreData = retrieveTrackerCoreDataEntity(for: tracker)
+        let categoryCoreData = retrieveCategoryCoreDataEntity(for: category)
         trackerCoreData.trackerID = tracker.id
         trackerCoreData.name = tracker.name
         trackerCoreData.colorHex = UIColorMarshalling.serialize(color: tracker.color)
         trackerCoreData.emoji = tracker.emoji
         trackerCoreData.scheduleString = tracker.schedule.map({ $0.rawValue }).joined(separator: ",")
-        trackerCoreData.category = categoryCoreData?.first
+        trackerCoreData.category = categoryCoreData
         try context.save()
     }
 

@@ -29,7 +29,7 @@ final class SupplementaryView: UICollectionReusableView {
         addSubview(sectionTitle)
         NSLayoutConstraint.activate([
             sectionTitle.topAnchor.constraint(equalTo: topAnchor),
-            sectionTitle.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+            sectionTitle.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 28),
             sectionTitle.heightAnchor.constraint(equalToConstant: 20)
         ])
     }

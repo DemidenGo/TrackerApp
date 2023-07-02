@@ -143,9 +143,9 @@ final class TrackersViewController: UIViewController {
             stubLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 
             trackersCollectionView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 10),
-            trackersCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            trackersCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             trackersCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            trackersCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+            trackersCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
 
@@ -198,6 +198,16 @@ final class TrackersViewController: UIViewController {
         let trackerRecord = TrackerRecord(id: trackerID, date: currentDate)
         try? recordsStore.delete(trackerRecord)
     }
+
+    private func editTracker(at indexPath: IndexPath) {
+        guard let tracker = trackerStore.object(at: indexPath),
+              let category = trackerStore.name(of: indexPath.section) else { return }
+        let dayCounter = trackerStore.records(for: indexPath).count
+        let viewController = TrackerCreationViewController(trackerType: .existing)
+        viewController.trackerStore = trackerStore
+        viewController.edit(existing: tracker, in: category, with: dayCounter)
+        present(viewController, animated: true)
+    }
 }
 
 // MARK: - UITextFieldDelegate
@@ -243,7 +253,42 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 12, left: 0, bottom: 16, right: 0)
+        return UIEdgeInsets(top: 12, left: 16, bottom: 16, right: 16)
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension TrackersViewController: UICollectionViewDelegate {
+
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        guard indexPaths.count > 0 else { return nil }
+        let indexPath = indexPaths[0]
+        return UIContextMenuConfiguration(actionProvider: { actions in
+            return UIMenu(children: [UIAction(title: L10n.Trackers.pinTitle) { _ in
+
+            },
+                                     UIAction(title: L10n.Trackers.editTitle) { [weak self] _ in
+                self?.editTracker(at: indexPath)
+            },
+                                     UIAction(title: L10n.Trackers.deleteTitle, attributes: .destructive) { _ in
+
+            }])
+        })
+    }
+
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, highlightPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? TrackerCell else {
+            preconditionFailure("Error: unable to get cell for use in preview")
+        }
+        return UITargetedPreview(view: cell.contextMenuPreview)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, dismissalPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? TrackerCell else {
+            preconditionFailure("Error: unable to get cell for use in preview")
+        }
+        return UITargetedPreview(view: cell.contextMenuPreview)
     }
 }
 
@@ -298,12 +343,18 @@ extension TrackersViewController: TrackerCellDelegate {
 
 extension TrackersViewController: TrackerStoreDelegate {
 
-    func didUpdateTracker(_ insertedSections: IndexSet, _ deletedSections: IndexSet, _ updatedIndexPaths: [IndexPath], _ insertedIndexPaths: [IndexPath], _ deletedIndexPaths: [IndexPath]) {
+    func didUpdateTracker(_ insertedSections: IndexSet,
+                          _ deletedSections: IndexSet,
+                          _ updatedSections: IndexSet,
+                          _ updatedIndexPaths: [IndexPath],
+                          _ insertedIndexPaths: [IndexPath],
+                          _ deletedIndexPaths: [IndexPath]) {
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(delay)) { [weak self] in
             self?.trackersCollectionView.isHidden = self?.trackerStore.numberOfSections == 0 ? true : false
             self?.trackersCollectionView.performBatchUpdates {
                 self?.trackersCollectionView.insertSections(insertedSections)
                 self?.trackersCollectionView.deleteSections(deletedSections)
+                self?.trackersCollectionView.reloadSections(updatedSections)
                 self?.trackersCollectionView.insertItems(at: insertedIndexPaths)
                 self?.trackersCollectionView.deleteItems(at: deletedIndexPaths)
                 self?.trackersCollectionView.reloadItems(at: updatedIndexPaths)

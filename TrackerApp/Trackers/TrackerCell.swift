@@ -11,6 +11,7 @@ final class TrackerCell: UICollectionViewCell {
 
     weak var delegate: TrackerCellDelegate?
 
+    var contextMenuPreview: UIView { return trackerView }
     private(set) lazy var trackerID = ""
 
     private lazy var trackerView: UIView = {

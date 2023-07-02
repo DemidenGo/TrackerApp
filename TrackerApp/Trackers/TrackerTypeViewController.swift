@@ -10,6 +10,7 @@ import UIKit
 enum TrackerType {
     case regular
     case irregular
+    case existing
 }
 
 final class TrackerTypeViewController: UIViewController {
@@ -74,8 +75,7 @@ final class TrackerTypeViewController: UIViewController {
     }
 
     private func presentViewController(newTracker type: TrackerType) {
-        let viewController = TrackerCreationViewController()
-        viewController.trackerType = type
+        let viewController = TrackerCreationViewController(trackerType: type)
         viewController.trackerStore = trackerStore
         viewController.callback = { [weak self] in self?.dismiss(animated: true) }
         present(viewController, animated: true)
