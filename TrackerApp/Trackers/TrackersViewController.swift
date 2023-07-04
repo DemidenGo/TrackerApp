@@ -201,12 +201,39 @@ final class TrackersViewController: UIViewController {
 
     private func editTracker(at indexPath: IndexPath) {
         guard let tracker = trackerStore.object(at: indexPath),
-              let category = trackerStore.name(of: indexPath.section) else { return }
+              let category = trackerStore.categoryStringForTracker(at: indexPath) else { return }
         let dayCounter = trackerStore.records(for: indexPath).count
-        let viewController = TrackerCreationViewController(trackerType: .existing)
-        viewController.trackerStore = trackerStore
-        viewController.edit(existing: tracker, in: category, with: dayCounter)
-        present(viewController, animated: true)
+        let editViewController = TrackerCreationViewController(trackerType: .existing)
+        editViewController.trackerStore = trackerStore
+        editViewController.edit(existing: tracker,
+                                in: category,
+                                with: dayCounter,
+                                isPinned: trackerStore.checkTrackerIsPinned(at: indexPath))
+        present(editViewController, animated: true)
+    }
+
+    private func deleteTracker(at indexPath: IndexPath) {
+        let alert = UIAlertController(title: nil,
+                                      message: L10n.Trackers.deleteConfirmationTitle,
+                                      preferredStyle: .actionSheet)
+        let deleteAction = UIAlertAction(title: L10n.Trackers.deleteTitle, style: .destructive) { [weak self] _ in
+            try? self?.trackerStore.deleteTracker(at: indexPath)
+        }
+        let cancelAction = UIAlertAction(title: L10n.Trackers.cancelTitle, style: .cancel)
+        [deleteAction, cancelAction].forEach { alert.addAction($0) }
+        present(alert, animated: true)
+    }
+
+    private func pinUnpinActionForTracker(at indexPath: IndexPath) {
+        if trackerStore.checkTrackerIsPinned(at: indexPath) {
+            try? trackerStore.unpinTracker(at: indexPath)
+        } else {
+            try? trackerStore.pinTracker(at: indexPath)
+        }
+    }
+
+    private func pinUnpinTitleForTracker(at indexPath: IndexPath) -> String {
+        trackerStore.checkTrackerIsPinned(at: indexPath) ? L10n.Trackers.unpinTitle : L10n.Trackers.pinTitle
     }
 }
 
@@ -264,16 +291,18 @@ extension TrackersViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
         guard indexPaths.count > 0 else { return nil }
         let indexPath = indexPaths[0]
-        return UIContextMenuConfiguration(actionProvider: { actions in
-            return UIMenu(children: [UIAction(title: L10n.Trackers.pinTitle) { _ in
-
-            },
-                                     UIAction(title: L10n.Trackers.editTitle) { [weak self] _ in
-                self?.editTracker(at: indexPath)
-            },
-                                     UIAction(title: L10n.Trackers.deleteTitle, attributes: .destructive) { _ in
-
-            }])
+        return UIContextMenuConfiguration(actionProvider: { [weak self] actions in
+            return UIMenu(children: [
+                UIAction(title: self?.pinUnpinTitleForTracker(at: indexPath) ?? "") { _ in
+                    self?.pinUnpinActionForTracker(at: indexPath)
+                },
+                UIAction(title: L10n.Trackers.editTitle) { _ in
+                    self?.editTracker(at: indexPath)
+                },
+                UIAction(title: L10n.Trackers.deleteTitle, attributes: .destructive) { _ in
+                    self?.deleteTracker(at: indexPath)
+                }
+            ])
         })
     }
 

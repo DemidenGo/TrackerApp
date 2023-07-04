@@ -112,7 +112,7 @@ extension NewCategoryViewController: UITextFieldDelegate {
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
-        guard textField.text != "" else {
+        guard let text = textField.text, text != "", text != L10n.Trackers.pinnedTitle.dropFirst() else {
             disableDoneButton()
             return
         }

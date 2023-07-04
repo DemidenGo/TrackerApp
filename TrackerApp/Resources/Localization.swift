@@ -42,8 +42,12 @@ enum L10n {
         static let categoryNamePlaceholder = NSLocalizedString("categoryNamePlaceholder", comment: "Category name placeholder")
         static let doneTitle = NSLocalizedString("doneTitle", comment: "Done button title")
         static let pinTitle = NSLocalizedString("pinTitle", comment: "Pin tracker title")
+        static let unpinTitle = NSLocalizedString("unpinTitle", comment: "Unpin tracker title")
         static let editTitle = NSLocalizedString("editTitle", comment: "Edit tracker title")
         static let deleteTitle = NSLocalizedString("deleteTitle", comment: "Delete tracker title")
+        static let saveTitle = NSLocalizedString("saveTitle", comment: "Save button title")
+        static let deleteConfirmationTitle = NSLocalizedString("deleteConfirmationTitle", comment: "Delete confirm title")
+        static let pinnedTitle = NSLocalizedString("pinnedTitle", comment: "Pinned trackers category title")
     }
     enum Weekdays {
         // Full style

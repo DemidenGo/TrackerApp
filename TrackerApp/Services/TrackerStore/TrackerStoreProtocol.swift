@@ -11,9 +11,13 @@ protocol TrackerStoreProtocol {
     var numberOfSections: Int { get }
     func numberOfItemsInSection(_ section: Int) -> Int
     func name(of section: Int) -> String?
+    func categoryStringForTracker(at indexPath: IndexPath) -> String?
     func object(at indexPath: IndexPath) -> Tracker?
-    func save(_ tracker: Tracker, in category: String) throws
+    func save(_ tracker: Tracker, in category: String, isPinned: Bool) throws
     func deleteTracker(at indexPath: IndexPath) throws
     func trackersFor(_ currentDate: String, searchRequest: String?)
     func records(for trackerIndexPath: IndexPath) -> Set<TrackerRecord>
+    func pinTracker(at indexPath: IndexPath) throws
+    func unpinTracker(at indexPath: IndexPath) throws
+    func checkTrackerIsPinned(at indexPath: IndexPath) -> Bool
 }

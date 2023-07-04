@@ -21,8 +21,12 @@ final class TrackerStore: NSObject {
 
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let fetchRequest = TrackerCoreData.fetchRequest()
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: Constants.sortTrackersByCategoryKey, ascending: true),
-                                        NSSortDescriptor(key: Constants.sortTrackersByNameKey, ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: Constants.sortTrackersByCategoryKey,
+                                                         ascending: true,
+                                                         selector: #selector(NSString.localizedStandardCompare(_:))),
+                                        NSSortDescriptor(key: Constants.sortTrackersByNameKey,
+                                                         ascending: true,
+                                                         selector: #selector(NSString.localizedStandardCompare(_:)))]
         fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(TrackerCoreData.scheduleString), "\(Date().startOfDay.weekDayString)")
         let controller = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                     managedObjectContext: context,
@@ -182,14 +186,20 @@ extension TrackerStore: TrackerStoreProtocol {
         fetchedResultsController.sections?[section].name
     }
 
-    func save(_ tracker: Tracker, in category: String) throws {
+    func categoryStringForTracker(at indexPath: IndexPath) -> String? {
+        let trackerCoreData = fetchedResultsController.object(at: indexPath)
+        return trackerCoreData.initialCategory
+    }
+
+    func save(_ tracker: Tracker, in category: String, isPinned: Bool) throws {
         let trackerCoreData = retrieveTrackerCoreDataEntity(for: tracker)
-        let categoryCoreData = retrieveCategoryCoreDataEntity(for: category)
+        let categoryCoreData = retrieveCategoryCoreDataEntity(for: isPinned ? L10n.Trackers.pinnedTitle : category)
         trackerCoreData.trackerID = tracker.id
         trackerCoreData.name = tracker.name
         trackerCoreData.colorHex = UIColorMarshalling.serialize(color: tracker.color)
         trackerCoreData.emoji = tracker.emoji
         trackerCoreData.scheduleString = tracker.schedule.map({ $0.rawValue }).joined(separator: ",")
+        trackerCoreData.initialCategory = category
         trackerCoreData.category = categoryCoreData
         try context.save()
     }
@@ -220,5 +230,32 @@ extension TrackerStore: TrackerStoreProtocol {
         } catch {
             return Set<TrackerRecord>()
         }
+    }
+
+    func pinTracker(at indexPath: IndexPath) throws {
+        let pinnedTrackerCoreData = fetchedResultsController.object(at: indexPath)
+        let pinnedCategoryCoreData: TrackerCategoryCoreData
+        if let existingCategoryCoreData = retrieveCategoryCoreDataEntity(for: L10n.Trackers.pinnedTitle) {
+            pinnedCategoryCoreData = existingCategoryCoreData
+        } else {
+            pinnedCategoryCoreData = TrackerCategoryCoreData(context: context)
+            pinnedCategoryCoreData.title = L10n.Trackers.pinnedTitle
+            pinnedCategoryCoreData.isCategorySelect = false
+        }
+        pinnedTrackerCoreData.category = pinnedCategoryCoreData
+        try context.save()
+    }
+
+    func unpinTracker(at indexPath: IndexPath) throws {
+        let unpinnedTrackerCoreData = fetchedResultsController.object(at: indexPath)
+        guard let initialCategoryString = unpinnedTrackerCoreData.initialCategory else { return }
+        let initialCategoryCoreData = retrieveCategoryCoreDataEntity(for: initialCategoryString)
+        unpinnedTrackerCoreData.category = initialCategoryCoreData
+        try context.save()
+    }
+
+    func checkTrackerIsPinned(at indexPath: IndexPath) -> Bool {
+        let trackerCoreData = fetchedResultsController.object(at: indexPath)
+        return trackerCoreData.category?.title == L10n.Trackers.pinnedTitle ? true : false
     }
 }

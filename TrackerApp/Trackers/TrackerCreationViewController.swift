@@ -19,6 +19,7 @@ final class TrackerCreationViewController: UIViewController {
     private var selectedEmoji: String?
     private var selectedColor: UIColor?
     private var trackerID: String?
+    private var isPinned = false
     private var trackerNameTextFieldConstraint = NSLayoutConstraint()
 
     private var isTrackerDataComplete: Bool {
@@ -190,13 +191,14 @@ final class TrackerCreationViewController: UIViewController {
         selectColorIfNeeded()
     }
 
-    func edit(existing tracker: Tracker, in category: String, with dayCounter: Int) {
+    func edit(existing tracker: Tracker, in category: String, with dayCounter: Int, isPinned: Bool) {
         selectedCategory = category
         selectedTrackerName = tracker.name
         selectedSchedule = tracker.schedule
         selectedEmoji = tracker.emoji
         selectedColor = tracker.color
         trackerID = tracker.id
+        self.isPinned = isPinned
         let daysTitle = String.localizedStringWithFormat(L10n.Trackers.trackedDaysTitle, dayCounter)
         daysCounterLabel.text = "\(dayCounter) " + daysTitle
     }
@@ -241,7 +243,7 @@ final class TrackerCreationViewController: UIViewController {
                                  color: selectedColor,
                                  emoji: selectedEmoji,
                                  schedule: selectedSchedule)
-        try? trackerStore?.save(newTracker, in: selectedCategory)
+        try? trackerStore?.save(newTracker, in: selectedCategory, isPinned: isPinned)
         closeControllerAction()
     }
 
@@ -308,6 +310,7 @@ final class TrackerCreationViewController: UIViewController {
             mainTitleLabel.text = L10n.Trackers.editTrackerTitle
             trackerNameTextFieldConstraint.constant = 116
             setupDaysCounterLabelConstraints()
+            createButton.setTitle(L10n.Trackers.saveTitle, for: .normal)
         }
     }
 

@@ -16,6 +16,8 @@ final class CategoryStore: NSObject {
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData> = {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: Constants.sortCategoriesKey, ascending: true)]
+        fetchRequest.predicate = NSPredicate(format: "%K != %@",
+                                             #keyPath(TrackerCategoryCoreData.title), L10n.Trackers.pinnedTitle)
         let controller = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                     managedObjectContext: context,
                                                     sectionNameKeyPath: nil,
