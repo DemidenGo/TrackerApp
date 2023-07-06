@@ -44,9 +44,17 @@ extension RecordStore: RecordStoreProtocol {
         requestRecord.returnsObjectsAsFaults = false
         requestRecord.predicate = NSPredicate(format: "%K == %@ AND %K == %@", #keyPath(TrackerRecordCoreData.tracker.trackerID), record.id, #keyPath(TrackerRecordCoreData.date), record.date as CVarArg)
         guard let recordCoreData = try? context.fetch(requestRecord).first else {
-            throw RecordStoreError.requestedObjectNotFopund
+            throw RecordStoreError.requestedObjectNotFound
         }
         context.delete(recordCoreData)
         try context.save()
+    }
+
+    func completedTrackerIDs(for date: Date) -> [String?] {
+        let requestRecords = NSFetchRequest<TrackerRecordCoreData>(entityName: Constants.trackerRecordCoreData)
+        requestRecords.returnsObjectsAsFaults = false
+        requestRecords.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.date), date as CVarArg)
+        guard let recordsCoreData = try? context.fetch(requestRecords) else { return [] }
+        return recordsCoreData.map { $0.tracker?.trackerID }
     }
 }

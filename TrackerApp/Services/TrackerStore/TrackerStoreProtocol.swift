@@ -16,6 +16,8 @@ protocol TrackerStoreProtocol {
     func save(_ tracker: Tracker, in category: String, isPinned: Bool) throws
     func deleteTracker(at indexPath: IndexPath) throws
     func trackersFor(_ currentDate: String, searchRequest: String?)
+    func completedTrackersFor(_ IDs: [String?], on currentDate: String)
+    func uncompletedTrackersFor(_ IDs: [String?], on currentDate: String)
     func records(for trackerIndexPath: IndexPath) -> Set<TrackerRecord>
     func pinTracker(at indexPath: IndexPath) throws
     func unpinTracker(at indexPath: IndexPath) throws

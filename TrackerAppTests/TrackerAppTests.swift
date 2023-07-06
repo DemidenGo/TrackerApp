@@ -13,6 +13,6 @@ final class TrackerAppTests: XCTestCase {
 
     func testTrackersViewController() {
         let viewController = TrackersViewController()
-        assertSnapshot(matching: viewController, as: .image)
+        assertSnapshot(matching: viewController, as: .image(traits: .init(userInterfaceStyle: .light)))
     }
 }

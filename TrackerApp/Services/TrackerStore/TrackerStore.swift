@@ -219,6 +219,16 @@ extension TrackerStore: TrackerStoreProtocol {
         try? fetchedResultsController.performFetch()
     }
 
+    func completedTrackersFor(_ IDs: [String?], on currentDate: String) {
+        fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@ AND %K IN %@", #keyPath(TrackerCoreData.scheduleString), currentDate, #keyPath(TrackerCoreData.trackerID), IDs)
+        try? fetchedResultsController.performFetch()
+    }
+
+    func uncompletedTrackersFor(_ IDs: [String?], on currentDate: String) {
+        fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "%K CONTAINS[n] %@ AND NOT %K IN %@", #keyPath(TrackerCoreData.scheduleString), currentDate, #keyPath(TrackerCoreData.trackerID), IDs)
+        try? fetchedResultsController.performFetch()
+    }
+
     func records(for trackerIndexPath: IndexPath) -> Set<TrackerRecord> {
         let trackerCoreData = fetchedResultsController.object(at: trackerIndexPath)
         guard let trackerRecordsCoreData = trackerCoreData.records as? Set<TrackerRecordCoreData> else {

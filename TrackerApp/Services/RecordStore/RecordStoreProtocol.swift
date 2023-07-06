@@ -10,4 +10,5 @@ import UIKit
 protocol RecordStoreProtocol {
     func save(_ record: TrackerRecord) throws
     func delete(_ record: TrackerRecord) throws
+    func completedTrackerIDs(for date: Date) -> [String?]
 }

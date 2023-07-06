@@ -61,6 +61,16 @@ final class TrackerCell: UICollectionViewCell {
         return button
     }()
 
+    private lazy var pinImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 12)
+        let image = UIImage(systemName: Images.Trackers.pin, withConfiguration: imageConfig)
+        imageView.image = image?.withTintColor(.white, renderingMode: .alwaysOriginal)
+        imageView.isHidden = true
+        return imageView
+    }()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupConstraints()
@@ -76,7 +86,7 @@ final class TrackerCell: UICollectionViewCell {
 
     private func setupConstraints() {
         [trackerView, dayCounterLabel, increaseDayCounterButton].forEach { contentView.addSubview($0) }
-        [trackerEmojiLabel, trackerNameLabel].forEach { trackerView.addSubview($0) }
+        [trackerEmojiLabel, trackerNameLabel, pinImageView].forEach { trackerView.addSubview($0) }
         NSLayoutConstraint.activate([
             trackerView.topAnchor.constraint(equalTo: contentView.topAnchor),
             trackerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -99,7 +109,10 @@ final class TrackerCell: UICollectionViewCell {
             increaseDayCounterButton.topAnchor.constraint(equalTo: trackerView.bottomAnchor, constant: 8),
             increaseDayCounterButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
             increaseDayCounterButton.widthAnchor.constraint(equalToConstant: 34),
-            increaseDayCounterButton.heightAnchor.constraint(equalToConstant: 34)
+            increaseDayCounterButton.heightAnchor.constraint(equalToConstant: 34),
+
+            pinImageView.topAnchor.constraint(equalTo: trackerView.topAnchor, constant: 18),
+            pinImageView.trailingAnchor.constraint(equalTo: trackerView.trailingAnchor, constant: -12)
         ])
     }
 
@@ -128,5 +141,9 @@ final class TrackerCell: UICollectionViewCell {
         let checkmarkImage = UIImage(systemName: Images.Trackers.checkmark, withConfiguration: symbolConfig)
         increaseDayCounterButton.setImage(checkmarkImage, for: .normal)
         increaseDayCounterButton.backgroundColor = increaseDayCounterButton.backgroundColor?.withAlphaComponent(0.5)
+    }
+
+    func setImageForTrackerState(isPinned: Bool) {
+        pinImageView.isHidden = isPinned ? false : true
     }
 }

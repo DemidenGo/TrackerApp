@@ -27,5 +27,6 @@ enum Images {
         static let nothingFound = "NothingFoundIcon"
         static let plus = "plus"
         static let checkmark = "checkmark"
+        static let pin = "pin.fill"
     }
 }

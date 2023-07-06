@@ -48,6 +48,11 @@ enum L10n {
         static let saveTitle = NSLocalizedString("saveTitle", comment: "Save button title")
         static let deleteConfirmationTitle = NSLocalizedString("deleteConfirmationTitle", comment: "Delete confirm title")
         static let pinnedTitle = NSLocalizedString("pinnedTitle", comment: "Pinned trackers category title")
+        static let filtersTitle = NSLocalizedString("filtersTitle", comment: "Filters button title")
+        static let allTrackersTitle = NSLocalizedString("allTrackersTitle", comment: "All trackers title for filter button")
+        static let todayTrackersTitle = NSLocalizedString("todayTrackersTitle", comment: "Today trackers title for filter")
+        static let completedTrackersTitle = NSLocalizedString("completedTrackersTitle", comment: "Completed trackers title")
+        static let uncompletedTrackersTitle = NSLocalizedString("uncompletedTrackersTitle", comment: "Uncompleted trackers title")
     }
     enum Weekdays {
         // Full style

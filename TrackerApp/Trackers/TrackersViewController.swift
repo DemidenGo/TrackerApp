@@ -13,7 +13,9 @@ final class TrackersViewController: UIViewController {
     lazy var trackerStore: TrackerStoreProtocol = TrackerStore(delegate: self)
     lazy var recordsStore: RecordStoreProtocol = RecordStore()
     private var currentDate = Date().startOfDay
+    private var today: Date { Date().startOfDay }
     private lazy var delay = 1 // Delay in seconds for animation after tracker creation
+    private var selectedFilter: Filter = .today { didSet { filterTrackers() } }
 
     private lazy var addButton: UIButton = {
         let button = UIButton()
@@ -28,7 +30,7 @@ final class TrackersViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = L10n.Trackers.trackersTitle
-        label.font = UIFont(name: Fonts.bold, size: 34)   
+        label.font = UIFont(name: Fonts.bold, size: 34)
         return label
     }()
 
@@ -82,6 +84,20 @@ final class TrackersViewController: UIViewController {
         return collectionView
     }()
 
+    private lazy var filterButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle(L10n.Trackers.filtersTitle, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = .interfaceBlue
+        button.layer.cornerRadius = 16
+        button.layer.masksToBounds = true
+        button.isHidden = trackersCollectionView.isHidden
+        button.addTarget(self, action: #selector(showFilters), for: .touchUpInside)
+        return button
+    }()
+
     init(analyticsService: AnalyticsServiceProtocol = AnalyticsService()) {
         self.analyticsService = analyticsService
         super.init(nibName: nil, bundle: nil)
@@ -119,7 +135,8 @@ final class TrackersViewController: UIViewController {
          searchTextField,
          stubImageView,
          stubLabel,
-         trackersCollectionView].forEach { view.addSubview($0) }
+         trackersCollectionView,
+         filterButton].forEach { view.addSubview($0) }
         NSLayoutConstraint.activate([
             addButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             addButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 6),
@@ -145,8 +162,20 @@ final class TrackersViewController: UIViewController {
             trackersCollectionView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 10),
             trackersCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             trackersCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            trackersCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            trackersCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+            filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            filterButton.bottomAnchor.constraint(equalTo: trackersCollectionView.bottomAnchor, constant: -16),
+            filterButton.heightAnchor.constraint(equalToConstant: 50),
+            filterButton.widthAnchor.constraint(equalToConstant: 114)
         ])
+    }
+
+    @objc private func showFilters() {
+        let filtersViewController = FiltersViewController(selectedFilter: selectedFilter) { [weak self] selectedFilter in
+            self?.selectedFilter = selectedFilter
+        }
+        present(filtersViewController, animated: true)
     }
 
     @objc private func addNewTracker() {
@@ -158,18 +187,43 @@ final class TrackersViewController: UIViewController {
 
     @objc private func dateChanged() {
         currentDate = datePicker.date.startOfDay
-        trackerStore.trackersFor(currentDate.weekDayString, searchRequest: nil)
-        reloadCollectionView()
+        if currentDate == today {
+            selectedFilter = .today
+        } else {
+            selectedFilter = .all
+        }
         presentedViewController?.dismiss(animated: true)
+    }
+
+    private func filterTrackers() {
+        switch selectedFilter {
+        case .all:
+            trackerStore.trackersFor(currentDate.weekDayString, searchRequest: nil)
+        case .today:
+            datePicker.date = today
+            currentDate = today
+            trackerStore.trackersFor(today.weekDayString, searchRequest: nil)
+        case .completed:
+            let completedTrackerIDs = recordsStore.completedTrackerIDs(for: currentDate)
+            trackerStore.completedTrackersFor(completedTrackerIDs, on: currentDate.weekDayString)
+        case .uncompleted:
+            let completedTrackerIDs = recordsStore.completedTrackerIDs(for: currentDate)
+            trackerStore.uncompletedTrackersFor(completedTrackerIDs, on: currentDate.weekDayString)
+        }
+        reloadCollectionView()
     }
 
     private func reloadCollectionView() {
         trackersCollectionView.reloadData()
         trackersCollectionView.isHidden = trackerStore.numberOfSections == 0 ? true : false
+        filterButton.isHidden = trackersCollectionView.isHidden
         trackersCollectionView.contentOffset = CGPoint(x: 0, y: -24)
         if trackerStore.numberOfSections == 0 {
             stubImageView.image = UIImage(named: Images.Trackers.nothingFound)
             stubLabel.text = L10n.Trackers.nothingFoundTitle
+        } else {
+            stubImageView.image = UIImage(named: Images.Trackers.emptyState)
+            stubLabel.text = L10n.Trackers.emptyStateTitle
         }
     }
 
@@ -338,6 +392,7 @@ extension TrackersViewController: UICollectionViewDataSource {
               let tracker = trackerStore.object(at: indexPath) else { return UICollectionViewCell() }
         let trackerRecords = trackerStore.records(for: indexPath)
         config(cell: cell, with: tracker, trackerRecords)
+        cell.setImageForTrackerState(isPinned: trackerStore.checkTrackerIsPinned(at: indexPath))
         return cell
     }
 
@@ -380,6 +435,7 @@ extension TrackersViewController: TrackerStoreDelegate {
                           _ deletedIndexPaths: [IndexPath]) {
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(delay)) { [weak self] in
             self?.trackersCollectionView.isHidden = self?.trackerStore.numberOfSections == 0 ? true : false
+            self?.filterButton.isHidden = self?.trackerStore.numberOfSections == 0 ? true : false
             self?.trackersCollectionView.performBatchUpdates {
                 self?.trackersCollectionView.insertSections(insertedSections)
                 self?.trackersCollectionView.deleteSections(deletedSections)

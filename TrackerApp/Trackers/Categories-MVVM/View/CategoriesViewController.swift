@@ -56,6 +56,7 @@ final class CategoriesViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
+        tableView.separatorColor = .tableSeparatorColor
         tableView.register(ButtonTableCell.self, forCellReuseIdentifier: ButtonTableCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
