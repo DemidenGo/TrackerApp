@@ -18,6 +18,10 @@
 		9254FD002A54B32A0079F197 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 9254FCFF2A54B32A0079F197 /* SnapshotTesting */; };
 		9254FD042A55784D0079F197 /* FiltersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9254FD032A55784D0079F197 /* FiltersViewController.swift */; };
 		9254FD062A558C2E0079F197 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9254FD052A558C2E0079F197 /* Filter.swift */; };
+		9254FD082A573DD60079F197 /* StatisticsTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9254FD072A573DD60079F197 /* StatisticsTableCell.swift */; };
+		9254FD0A2A573FE10079F197 /* Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9254FD092A573FE10079F197 /* Statistics.swift */; };
+		9254FD0D2A5855990079F197 /* StatisticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9254FD0C2A5855990079F197 /* StatisticsService.swift */; };
+		9254FD112A5858750079F197 /* StatisticsServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9254FD102A5858750079F197 /* StatisticsServiceProtocol.swift */; };
 		9256642429F03CAA00C12005 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9256642229F03CAA00C12005 /* Model.xcdatamodeld */; };
 		9256642729F0407100C12005 /* UIColorMarshalling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9256642629F0407100C12005 /* UIColorMarshalling.swift */; };
 		9256643129F0514900C12005 /* TrackerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9256643029F0514900C12005 /* TrackerStore.swift */; };
@@ -100,6 +104,10 @@
 		9254FCF62A54B2CA0079F197 /* TrackerAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerAppTests.swift; sourceTree = "<group>"; };
 		9254FD032A55784D0079F197 /* FiltersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersViewController.swift; sourceTree = "<group>"; };
 		9254FD052A558C2E0079F197 /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
+		9254FD072A573DD60079F197 /* StatisticsTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsTableCell.swift; sourceTree = "<group>"; };
+		9254FD092A573FE10079F197 /* Statistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Statistics.swift; sourceTree = "<group>"; };
+		9254FD0C2A5855990079F197 /* StatisticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsService.swift; sourceTree = "<group>"; };
+		9254FD102A5858750079F197 /* StatisticsServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsServiceProtocol.swift; sourceTree = "<group>"; };
 		9256642329F03CAA00C12005 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		9256642629F0407100C12005 /* UIColorMarshalling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorMarshalling.swift; sourceTree = "<group>"; };
 		9256643029F0514900C12005 /* TrackerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerStore.swift; sourceTree = "<group>"; };
@@ -256,6 +264,15 @@
 			path = TrackerAppTests;
 			sourceTree = "<group>";
 		};
+		9254FD0B2A5855750079F197 /* StatisticsService */ = {
+			isa = PBXGroup;
+			children = (
+				9254FD0C2A5855990079F197 /* StatisticsService.swift */,
+				9254FD102A5858750079F197 /* StatisticsServiceProtocol.swift */,
+			);
+			path = StatisticsService;
+			sourceTree = "<group>";
+		};
 		9256642529F03CB500C12005 /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
@@ -319,6 +336,7 @@
 			isa = PBXGroup;
 			children = (
 				9275A7AC29C06AD600F7FD64 /* StatisticsViewController.swift */,
+				9254FD072A573DD60079F197 /* StatisticsTableCell.swift */,
 			);
 			path = Statistics;
 			sourceTree = "<group>";
@@ -380,6 +398,7 @@
 				9275A7C929C3569200F7FD64 /* TrackerRecord.swift */,
 				9275A81829D5DF4400F7FD64 /* WeekDay.swift */,
 				9254FD052A558C2E0079F197 /* Filter.swift */,
+				9254FD092A573FE10079F197 /* Statistics.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -390,6 +409,7 @@
 				9256643E29F2BE5E00C12005 /* TrackerStore */,
 				9256644429F2BF2400C12005 /* RecordStore */,
 				9254FCEA2A4CCAE60079F197 /* AnalyticsService */,
+				9254FD0B2A5855750079F197 /* StatisticsService */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -599,6 +619,7 @@
 				9275A7D429C4C5DD00F7FD64 /* UIView+Extensions.swift in Sources */,
 				9256642429F03CAA00C12005 /* Model.xcdatamodeld in Sources */,
 				9275A7C829C3510700F7FD64 /* TrackerCategory.swift in Sources */,
+				9254FD0A2A573FE10079F197 /* Statistics.swift in Sources */,
 				927BA0C62A4ACEDC000D79E3 /* Constants.swift in Sources */,
 				927BA0C42A4A2E2B000D79E3 /* Fonts.swift in Sources */,
 				9256644329F2BEC000C12005 /* CategoryStoreProtocol.swift in Sources */,
@@ -619,8 +640,10 @@
 				9275A80E29D2D95B00F7FD64 /* CategoriesViewController.swift in Sources */,
 				9256644829F2BF9700C12005 /* CategoryStoreDelegate.swift in Sources */,
 				9254FD062A558C2E0079F197 /* Filter.swift in Sources */,
+				9254FD112A5858750079F197 /* StatisticsServiceProtocol.swift in Sources */,
 				9275A7CA29C3569200F7FD64 /* TrackerRecord.swift in Sources */,
 				9275A81929D5DF4400F7FD64 /* WeekDay.swift in Sources */,
+				9254FD0D2A5855990079F197 /* StatisticsService.swift in Sources */,
 				92D0E4322A02449300152FB6 /* OnboardingPageViewController.swift in Sources */,
 				9256645629F660B100C12005 /* RecordStoreProtocol.swift in Sources */,
 				9275A80C29CE0FBC00F7FD64 /* UIViewController+Extensions.swift in Sources */,
@@ -639,6 +662,7 @@
 				9275A7AD29C06AD600F7FD64 /* StatisticsViewController.swift in Sources */,
 				9256643329F0516B00C12005 /* CategoryStore.swift in Sources */,
 				9275A7C329C3132400F7FD64 /* TrackerTypeViewController.swift in Sources */,
+				9254FD082A573DD60079F197 /* StatisticsTableCell.swift in Sources */,
 				9275A7CE29C3782F00F7FD64 /* UITextField+Extensions.swift in Sources */,
 				927BA0C02A4A234B000D79E3 /* Localization.swift in Sources */,
 				9275A7CC29C3660700F7FD64 /* TrackerCreationViewController.swift in Sources */,

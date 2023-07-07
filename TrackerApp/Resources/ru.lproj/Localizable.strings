@@ -60,3 +60,7 @@ allTrackersTitle = "Все трекеры";
 todayTrackersTitle = "Трекеры на сегодня";
 completedTrackersTitle = "Завершенные";
 uncompletedTrackersTitle = "Незавершенные";
+bestPeriodTitle = "Лучший период";
+perfectDaysTitle = "Идеальные дни";
+trackersCompletedTitle = "Трекеров завершено";
+averageValueTitle = "Среднее значение";

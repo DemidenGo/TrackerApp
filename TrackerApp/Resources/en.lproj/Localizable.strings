@@ -60,3 +60,7 @@ allTrackersTitle = "All trackers";
 todayTrackersTitle = "Trackers for today";
 completedTrackersTitle = "Completed";
 uncompletedTrackersTitle = "Uncompleted";
+bestPeriodTitle = "Best period";
+perfectDaysTitle = "Perfect days";
+trackersCompletedTitle = "Trackers completed";
+averageValueTitle = "Average value";

@@ -14,6 +14,9 @@ extension UIColor {
     static var interfaceLightGray: UIColor { UIColor(named: "InterfaceLightGray") ?? .systemGray4 }
     static var buttonRed: UIColor { UIColor(named: "ButtonRed") ?? .systemRed }
     static var tableSeparatorColor: UIColor { UIColor(named: "TableSeparatorColor") ?? .systemGray3 }
+    static var firstGradientColor: UIColor { UIColor(named: "FirstGradientColor") ?? .systemRed }
+    static var secondGradientColor: UIColor { UIColor(named: "SecondGradientColor") ?? .systemGreen }
+    static var thirdGradientColor: UIColor { UIColor(named: "ThirdGradientColor") ?? .systemBlue }
     static let viewBackgroundColor = UIColor.systemBackground
     static let buttonColor = UIColor { traits in
         if traits.userInterfaceStyle == .light { return UIColor.black }

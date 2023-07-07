@@ -54,6 +54,16 @@ enum L10n {
         static let completedTrackersTitle = NSLocalizedString("completedTrackersTitle", comment: "Completed trackers title")
         static let uncompletedTrackersTitle = NSLocalizedString("uncompletedTrackersTitle", comment: "Uncompleted trackers title")
     }
+
+    // Statistics screens titles
+
+    enum Statistics {
+        static let bestPeriodTitle = NSLocalizedString("bestPeriodTitle", comment: "Statistics best period title")
+        static let perfectDaysTitle = NSLocalizedString("perfectDaysTitle", comment: "Perfect days title")
+        static let trackersCompletedTitle = NSLocalizedString("trackersCompletedTitle", comment: "Trackers completed title")
+        static let averageValueTitle = NSLocalizedString("averageValueTitle", comment: "Average value title")
+    }
+
     enum Weekdays {
         // Full style
         static let mondayTitle = NSLocalizedString("mondayTitle", comment: "Monday title")

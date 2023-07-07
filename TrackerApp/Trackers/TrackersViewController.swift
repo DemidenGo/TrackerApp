@@ -10,6 +10,7 @@ import UIKit
 final class TrackersViewController: UIViewController {
 
     private let analyticsService: AnalyticsServiceProtocol
+    private let statisticsService: StatisticsServiceProtocol
     lazy var trackerStore: TrackerStoreProtocol = TrackerStore(delegate: self)
     lazy var recordsStore: RecordStoreProtocol = RecordStore()
     private var currentDate = Date().startOfDay
@@ -98,8 +99,10 @@ final class TrackersViewController: UIViewController {
         return button
     }()
 
-    init(analyticsService: AnalyticsServiceProtocol = AnalyticsService()) {
+    init(analyticsService: AnalyticsServiceProtocol = AnalyticsService(),
+         statisticsService: StatisticsServiceProtocol = StatisticsService.shared) {
         self.analyticsService = analyticsService
+        self.statisticsService = statisticsService
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -415,8 +418,10 @@ extension TrackersViewController: TrackerCellDelegate {
         let trackerRecords = trackerStore.records(for: indexPath)
         if isCompletedOnCurrentDate(cell.trackerID, trackerRecords) {
             deleteTrackerRecord(for: cell.trackerID)
+            statisticsService.untrack()
         } else {
             saveTrackerRecord(for: cell.trackerID)
+            statisticsService.track()
             analyticsService.report(event: "click", params: ["main_screen": "track"])
         }
         delay = 1
