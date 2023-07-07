@@ -9,6 +9,7 @@ import Foundation
 
 protocol StatisticsServiceProtocol {
     var statistics: [Int] { get }
+    var statisticsIsEmpty: Bool { get }
     func track()
     func untrack()
 }

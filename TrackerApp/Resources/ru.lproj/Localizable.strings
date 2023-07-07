@@ -64,3 +64,4 @@ bestPeriodTitle = "Лучший период";
 perfectDaysTitle = "Идеальные дни";
 trackersCompletedTitle = "Трекеров завершено";
 averageValueTitle = "Среднее значение";
+nothingAnalyzeTitle = "Анализировать пока нечего";

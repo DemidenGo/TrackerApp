@@ -19,6 +19,13 @@ final class StatisticsService: StatisticsServiceProtocol {
 
     var statistics: [Int] { [bestPeriod, perfectDays, trackCount, averageValue] }
 
+    var statisticsIsEmpty: Bool {
+        if bestPeriod == 0, perfectDays == 0, averageValue == 0, trackCount == 0 {
+            return true
+        }
+        return false
+    }
+
     private var bestPeriod: Int { 0 }
     private var perfectDays: Int { 0 }
     private var averageValue: Int { 0 }

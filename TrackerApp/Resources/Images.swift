@@ -29,4 +29,8 @@ enum Images {
         static let checkmark = "checkmark"
         static let pin = "pin.fill"
     }
+    // Statistics screen images
+    enum Statistics {
+        static let stubImage = "StubImage"
+    }
 }

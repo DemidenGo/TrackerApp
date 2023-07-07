@@ -64,3 +64,4 @@ bestPeriodTitle = "Best period";
 perfectDaysTitle = "Perfect days";
 trackersCompletedTitle = "Trackers completed";
 averageValueTitle = "Average value";
+nothingAnalyzeTitle = "There is nothing to analyze yet";

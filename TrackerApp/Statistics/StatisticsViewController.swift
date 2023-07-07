@@ -30,6 +30,21 @@ final class StatisticsViewController: UIViewController {
         return tableView
     }()
 
+    private lazy var stubImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: Images.Statistics.stubImage)
+        return imageView
+    }()
+
+    private lazy var stubLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = L10n.Statistics.nothingAnalyzeTitle
+        label.font = UIFont(name: Fonts.medium, size: 12)
+        return label
+    }()
+
     init(statisticsService: StatisticsServiceProtocol = StatisticsService.shared) {
         self.statisticsService = statisticsService
         super.init(nibName: nil, bundle: nil)
@@ -48,13 +63,20 @@ final class StatisticsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         statisticsTableView.reloadData()
+        statisticsTableView.isHidden = statisticsService.statisticsIsEmpty
     }
 
     private func setupConstraints() {
-        [screenLabel, statisticsTableView].forEach { view.addSubview($0) }
+        [screenLabel, stubImageView, stubLabel, statisticsTableView].forEach { view.addSubview($0) }
         NSLayoutConstraint.activate([
             screenLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 44),
             screenLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+
+            stubImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stubImageView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: 20),
+
+            stubLabel.topAnchor.constraint(equalTo: stubImageView.bottomAnchor, constant: 8),
+            stubLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 
             statisticsTableView.topAnchor.constraint(equalTo: screenLabel.bottomAnchor, constant: 65),
             statisticsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
