@@ -15,4 +15,5 @@ protocol CategoriesViewModelProtocol {
     func deleteCategoryFromStore(at indexPath: IndexPath)
     func selectCategory(at indexPath: IndexPath)
     func didCreate(_ category: String)
+    func editCategory(at indexPath: IndexPath)
 }

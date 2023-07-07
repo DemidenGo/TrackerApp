@@ -96,7 +96,6 @@ final class CategoriesViewController: UIViewController {
         viewModel.categoriesObservable.bind { [weak self] _ in
             self?.categoriesTableView.isHidden = viewModel.categories.isEmpty
             self?.categoriesTableView.reloadData()
-            self?.dismissWithCallback()
         }
     }
 
@@ -165,6 +164,20 @@ extension CategoriesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         viewModel?.selectCategory(at: indexPath)
         dismissWithCallback()
+    }
+
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(actionProvider: { [weak self] actions in
+            return UIMenu(children: [
+                UIAction(title: L10n.Trackers.editTitle) { _ in
+                    self?.viewModel?.editCategory(at: indexPath)
+                },
+                UIAction(title: L10n.Trackers.deleteTitle, attributes: .destructive) { _ in
+                    self?.viewModel?.deleteCategoryFromStore(at: indexPath)
+                    self?.callback?(nil)
+                }
+            ])
+        })
     }
 }
 

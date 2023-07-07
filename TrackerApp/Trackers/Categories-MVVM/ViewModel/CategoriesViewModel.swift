@@ -74,6 +74,10 @@ extension CategoriesViewModel: CategoriesViewModelProtocol {
     func didCreate(_ category: String) {
         isNew(category) ? addToStore(category) : select(category)
     }
+
+    func editCategory(at indexPath: IndexPath) {
+
+    }
 }
 
 //MARK: - CategoryStoreDelegate
