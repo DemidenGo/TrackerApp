@@ -54,6 +54,7 @@ editTitle = "Edit";
 deleteTitle = "Delete";
 saveTitle = "Save";
 deleteConfirmationTitle = "Are you sure you want to delete tracker?";
+deleteCategoryConfirmationTitle = "Is this category definitely not needed?";
 pinnedTitle = "\U2009Pinned";
 filtersTitle = "Filters";
 allTrackersTitle = "All trackers";

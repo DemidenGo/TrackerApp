@@ -54,6 +54,7 @@ editTitle = "Редактировать";
 deleteTitle = "Удалить";
 saveTitle = "Сохранить";
 deleteConfirmationTitle = "Уверены что хотите удалить трекер?";
+deleteCategoryConfirmationTitle = "Эта категория точно не нужна?";
 pinnedTitle = "\U2009Закрепленные";
 filtersTitle = "Фильтры";
 allTrackersTitle = "Все трекеры";

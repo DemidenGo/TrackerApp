@@ -10,7 +10,7 @@ import UIKit
 final class TrackerCreationViewController: UIViewController {
 
     var trackerStore: TrackerStoreProtocol?
-    var callback: (() -> Void)?
+    var completion: (() -> Void)?
 
     private let trackerType: TrackerType
     private var selectedTrackerName: String?
@@ -223,7 +223,7 @@ final class TrackerCreationViewController: UIViewController {
 
     @objc private func closeControllerAction() {
         dismiss(animated: true) { [weak self] in
-            self?.callback?()
+            self?.completion?()
         }
     }
 
@@ -239,12 +239,12 @@ final class TrackerCreationViewController: UIViewController {
         } else {
             trackerID = UUID().uuidString
         }
-        let newTracker = Tracker(id: trackerID,
-                                 name: selectedTrackerName,
-                                 color: selectedColor,
-                                 emoji: selectedEmoji,
-                                 schedule: selectedSchedule)
-        try? trackerStore?.save(newTracker, in: selectedCategory, isPinned: isPinned)
+        let tracker = Tracker(id: trackerID,
+                              name: selectedTrackerName,
+                              color: selectedColor,
+                              emoji: selectedEmoji,
+                              schedule: selectedSchedule)
+        try? trackerStore?.save(tracker, in: selectedCategory, isPinned: isPinned)
         closeControllerAction()
     }
 
@@ -420,7 +420,7 @@ final class TrackerCreationViewController: UIViewController {
     }
 
     private func tapCategoriesAction() {
-        let categoriesViewModel = CategoriesViewModel()
+        let categoriesViewModel = CategoriesViewModel(trackerStore: trackerStore)
         let categoriesViewController = CategoriesViewController(viewModel: categoriesViewModel)
         categoriesViewController.callback = { [weak self] categoryName in
             guard let categoryName = categoryName else {

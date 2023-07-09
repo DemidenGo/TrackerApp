@@ -22,6 +22,8 @@
 		9254FD0A2A573FE10079F197 /* Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9254FD092A573FE10079F197 /* Statistics.swift */; };
 		9254FD0D2A5855990079F197 /* StatisticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9254FD0C2A5855990079F197 /* StatisticsService.swift */; };
 		9254FD112A5858750079F197 /* StatisticsServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9254FD102A5858750079F197 /* StatisticsServiceProtocol.swift */; };
+		9254FD162A5B43480079F197 /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9254FD152A5B43480079F197 /* AlertPresenter.swift */; };
+		9254FD182A5B44D70079F197 /* AlertPresenterProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9254FD172A5B44D70079F197 /* AlertPresenterProtocol.swift */; };
 		9256642429F03CAA00C12005 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9256642229F03CAA00C12005 /* Model.xcdatamodeld */; };
 		9256642729F0407100C12005 /* UIColorMarshalling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9256642629F0407100C12005 /* UIColorMarshalling.swift */; };
 		9256643129F0514900C12005 /* TrackerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9256643029F0514900C12005 /* TrackerStore.swift */; };
@@ -108,6 +110,8 @@
 		9254FD092A573FE10079F197 /* Statistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Statistics.swift; sourceTree = "<group>"; };
 		9254FD0C2A5855990079F197 /* StatisticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsService.swift; sourceTree = "<group>"; };
 		9254FD102A5858750079F197 /* StatisticsServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsServiceProtocol.swift; sourceTree = "<group>"; };
+		9254FD152A5B43480079F197 /* AlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
+		9254FD172A5B44D70079F197 /* AlertPresenterProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenterProtocol.swift; sourceTree = "<group>"; };
 		9256642329F03CAA00C12005 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		9256642629F0407100C12005 /* UIColorMarshalling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorMarshalling.swift; sourceTree = "<group>"; };
 		9256643029F0514900C12005 /* TrackerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerStore.swift; sourceTree = "<group>"; };
@@ -273,6 +277,15 @@
 			path = StatisticsService;
 			sourceTree = "<group>";
 		};
+		9254FD142A5B431E0079F197 /* AlertPresenter */ = {
+			isa = PBXGroup;
+			children = (
+				9254FD152A5B43480079F197 /* AlertPresenter.swift */,
+				9254FD172A5B44D70079F197 /* AlertPresenterProtocol.swift */,
+			);
+			path = AlertPresenter;
+			sourceTree = "<group>";
+		};
 		9256642529F03CB500C12005 /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
@@ -410,6 +423,7 @@
 				9256644429F2BF2400C12005 /* RecordStore */,
 				9254FCEA2A4CCAE60079F197 /* AnalyticsService */,
 				9254FD0B2A5855750079F197 /* StatisticsService */,
+				9254FD142A5B431E0079F197 /* AlertPresenter */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -617,6 +631,7 @@
 				9275A81529D2FE8000F7FD64 /* NewCategoryViewController.swift in Sources */,
 				9256644629F2BF5E00C12005 /* TrackerStoreDelegate.swift in Sources */,
 				9275A7D429C4C5DD00F7FD64 /* UIView+Extensions.swift in Sources */,
+				9254FD182A5B44D70079F197 /* AlertPresenterProtocol.swift in Sources */,
 				9256642429F03CAA00C12005 /* Model.xcdatamodeld in Sources */,
 				9275A7C829C3510700F7FD64 /* TrackerCategory.swift in Sources */,
 				9254FD0A2A573FE10079F197 /* Statistics.swift in Sources */,
@@ -647,6 +662,7 @@
 				92D0E4322A02449300152FB6 /* OnboardingPageViewController.swift in Sources */,
 				9256645629F660B100C12005 /* RecordStoreProtocol.swift in Sources */,
 				9275A80C29CE0FBC00F7FD64 /* UIViewController+Extensions.swift in Sources */,
+				9254FD162A5B43480079F197 /* AlertPresenter.swift in Sources */,
 				9275A7C629C34C7800F7FD64 /* Tracker.swift in Sources */,
 				9275A7DA29C8FDAA00F7FD64 /* TrackerCell.swift in Sources */,
 				92DB0DDB29FE92E600877A94 /* OnboardingViewController.swift in Sources */,

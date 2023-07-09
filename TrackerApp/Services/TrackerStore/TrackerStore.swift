@@ -268,4 +268,14 @@ extension TrackerStore: TrackerStoreProtocol {
         let trackerCoreData = fetchedResultsController.object(at: indexPath)
         return trackerCoreData.category?.title == L10n.Trackers.pinnedTitle ? true : false
     }
+
+    func updateTrackers(in category: String, to newCategory: String) {
+        let requestTrackers = NSFetchRequest<TrackerCoreData>(entityName: Constants.trackerCoreData)
+        requestTrackers.returnsObjectsAsFaults = false
+        requestTrackers.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCoreData.initialCategory), category)
+        let trackersCoreData = try? context.fetch(requestTrackers)
+        trackersCoreData?.forEach { $0.initialCategory = newCategory }
+        try? fetchedResultsController.performFetch()
+        try? context.save()
+    }
 }

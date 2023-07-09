@@ -22,4 +22,5 @@ protocol TrackerStoreProtocol {
     func pinTracker(at indexPath: IndexPath) throws
     func unpinTracker(at indexPath: IndexPath) throws
     func checkTrackerIsPinned(at indexPath: IndexPath) -> Bool
+    func updateTrackers(in category: String, to newCategory: String)
 }

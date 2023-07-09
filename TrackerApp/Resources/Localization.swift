@@ -47,6 +47,7 @@ enum L10n {
         static let deleteTitle = NSLocalizedString("deleteTitle", comment: "Delete tracker title")
         static let saveTitle = NSLocalizedString("saveTitle", comment: "Save button title")
         static let deleteConfirmationTitle = NSLocalizedString("deleteConfirmationTitle", comment: "Delete confirm title")
+        static let deleteCategoryConfirmationTitle = NSLocalizedString("deleteCategoryConfirmationTitle", comment: "")
         static let pinnedTitle = NSLocalizedString("pinnedTitle", comment: "Pinned trackers category title")
         static let filtersTitle = NSLocalizedString("filtersTitle", comment: "Filters button title")
         static let allTrackersTitle = NSLocalizedString("allTrackersTitle", comment: "All trackers title for filter button")

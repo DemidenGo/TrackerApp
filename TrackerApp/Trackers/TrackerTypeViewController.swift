@@ -16,6 +16,7 @@ enum TrackerType {
 final class TrackerTypeViewController: UIViewController {
 
     var trackerStore: TrackerStoreProtocol?
+    var updateTrackersCompletion: (() -> Void)?
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -77,7 +78,10 @@ final class TrackerTypeViewController: UIViewController {
     private func presentViewController(newTracker type: TrackerType) {
         let viewController = TrackerCreationViewController(trackerType: type)
         viewController.trackerStore = trackerStore
-        viewController.callback = { [weak self] in self?.dismiss(animated: true) }
+        viewController.completion = { [weak self] in
+            self?.dismiss(animated: true)
+            self?.updateTrackersCompletion?()
+        }
         present(viewController, animated: true)
     }
 
@@ -93,5 +97,14 @@ final class TrackerTypeViewController: UIViewController {
             stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             stackView.heightAnchor.constraint(equalToConstant: 136)
         ])
+    }
+}
+
+// MARK: - UIAdaptivePresentationControllerDelegate
+
+extension TrackerTypeViewController: UIAdaptivePresentationControllerDelegate {
+
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        updateTrackersCompletion?()
     }
 }

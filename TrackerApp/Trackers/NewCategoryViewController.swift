@@ -35,6 +35,7 @@ final class NewCategoryViewController: UIViewController {
         textField.enablesReturnKeyAutomatically = true
         textField.clearButtonMode = .whileEditing
         textField.smartInsertDeleteType = .no
+        textField.text = newCategoryName
         return textField
     }()
 
@@ -56,6 +57,11 @@ final class NewCategoryViewController: UIViewController {
         super.viewDidLoad()
         setupViewController()
         setupConstraints()
+    }
+
+    func edit(_ category: String) {
+        newCategoryName = category
+        categoryNameTextField.becomeFirstResponder()
     }
 
     private func setupViewController() {

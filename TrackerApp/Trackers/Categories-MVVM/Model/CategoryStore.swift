@@ -96,4 +96,10 @@ extension CategoryStore: CategoryStoreProtocol {
         let trackerCategoryCoreData = fetchedResultsController.object(at: indexPath)
         return try? makeCategoryName(from: trackerCategoryCoreData)
     }
+
+    func changeCategoryName(at indexPath: IndexPath, to newName: String) {
+        let categoryCoreData = fetchedResultsController.object(at: indexPath)
+        categoryCoreData.title = newName
+        try? context.save()
+    }
 }

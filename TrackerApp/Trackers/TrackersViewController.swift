@@ -11,6 +11,7 @@ final class TrackersViewController: UIViewController {
 
     private let analyticsService: AnalyticsServiceProtocol
     private let statisticsService: StatisticsServiceProtocol
+    private var alertPresenter: AlertPresenterProtocol
     lazy var trackerStore: TrackerStoreProtocol = TrackerStore(delegate: self)
     lazy var recordsStore: RecordStoreProtocol = RecordStore()
     private var currentDate = Date().startOfDay
@@ -100,10 +101,13 @@ final class TrackersViewController: UIViewController {
     }()
 
     init(analyticsService: AnalyticsServiceProtocol = AnalyticsService(),
-         statisticsService: StatisticsServiceProtocol = StatisticsService.shared) {
+         statisticsService: StatisticsServiceProtocol = StatisticsService.shared,
+         alertPresenter: AlertPresenterProtocol = AlertPresenter()) {
         self.analyticsService = analyticsService
         self.statisticsService = statisticsService
+        self.alertPresenter = alertPresenter
         super.init(nibName: nil, bundle: nil)
+        self.alertPresenter.viewController = self
     }
 
     required init?(coder: NSCoder) {
@@ -179,11 +183,16 @@ final class TrackersViewController: UIViewController {
             self?.selectedFilter = selectedFilter
         }
         present(filtersViewController, animated: true)
+        analyticsService.report(event: "click", params: ["main_screen": "filter"])
     }
 
     @objc private func addNewTracker() {
         let trackerTypeViewController = TrackerTypeViewController()
         trackerTypeViewController.trackerStore = trackerStore
+        trackerTypeViewController.presentationController?.delegate = trackerTypeViewController
+        trackerTypeViewController.updateTrackersCompletion = { [weak self] in
+            if self?.selectedFilter != .today { self?.filterTrackers() }
+        }
         present(trackerTypeViewController, animated: true)
         analyticsService.report(event: "click", params: ["main_screen": "add_track"])
     }
@@ -270,15 +279,9 @@ final class TrackersViewController: UIViewController {
     }
 
     private func deleteTracker(at indexPath: IndexPath) {
-        let alert = UIAlertController(title: nil,
-                                      message: L10n.Trackers.deleteConfirmationTitle,
-                                      preferredStyle: .actionSheet)
-        let deleteAction = UIAlertAction(title: L10n.Trackers.deleteTitle, style: .destructive) { [weak self] _ in
+        alertPresenter.showAlert(message: L10n.Trackers.deleteConfirmationTitle) { [weak self] in
             try? self?.trackerStore.deleteTracker(at: indexPath)
         }
-        let cancelAction = UIAlertAction(title: L10n.Trackers.cancelTitle, style: .cancel)
-        [deleteAction, cancelAction].forEach { alert.addAction($0) }
-        present(alert, animated: true)
     }
 
     private func pinUnpinActionForTracker(at indexPath: IndexPath) {
@@ -355,9 +358,11 @@ extension TrackersViewController: UICollectionViewDelegate {
                 },
                 UIAction(title: L10n.Trackers.editTitle) { _ in
                     self?.editTracker(at: indexPath)
+                    self?.analyticsService.report(event: "click", params: ["main_screen": "edit"])
                 },
                 UIAction(title: L10n.Trackers.deleteTitle, attributes: .destructive) { _ in
                     self?.deleteTracker(at: indexPath)
+                    self?.analyticsService.report(event: "click", params: ["main_screen": "delete"])
                 }
             ])
         })

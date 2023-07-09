@@ -11,6 +11,7 @@ final class CategoriesViewController: UIViewController {
 
     var callback: ((String?) -> ())?
     var viewModel: CategoriesViewModelProtocol?
+    private var alertPresenter: AlertPresenterProtocol
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -82,9 +83,12 @@ final class CategoriesViewController: UIViewController {
         categoriesTableView.scrollToRow(at: viewModel.selectedCategoryIndexPath, at: .bottom, animated: true)
     }
 
-    init(viewModel: CategoriesViewModelProtocol) {
-        super.init(nibName: nil, bundle: nil)
+    init(viewModel: CategoriesViewModelProtocol,
+         alertPresenter: AlertPresenterProtocol = AlertPresenter()) {
         self.viewModel = viewModel
+        self.alertPresenter = alertPresenter
+        super.init(nibName: nil, bundle: nil)
+        self.alertPresenter.viewController = self
     }
 
     required init?(coder: NSCoder) {
@@ -97,6 +101,18 @@ final class CategoriesViewController: UIViewController {
             self?.categoriesTableView.isHidden = viewModel.categories.isEmpty
             self?.categoriesTableView.reloadData()
         }
+        viewModel.categoryForEditObservable.bind { [weak self] category in
+            guard let category = category else { return }
+            self?.edit(category)
+        }
+        viewModel.isNeedToShowAlertObservable.bind { [weak self] isNeed in
+            if isNeed {
+                self?.alertPresenter.showAlert(message: L10n.Trackers.deleteCategoryConfirmationTitle) { [weak self] in
+                    self?.viewModel?.deleteConfirmed()
+                    self?.callback?(nil)
+                }
+            }
+        }
     }
 
     @objc private func addCategoryButtonAction() {
@@ -107,6 +123,16 @@ final class CategoriesViewController: UIViewController {
             self?.viewModel?.didCreate(category)
         }
         present(newCategoryViewController, animated: true)
+    }
+
+    private func edit(_ category: String) {
+        let editCategoryViewController = NewCategoryViewController()
+        editCategoryViewController.edit(category)
+        editCategoryViewController.callback = { [weak self] newCategory in
+            guard let newCategory = newCategory else { return }
+            self?.viewModel?.change(categoryName: category, to: newCategory)
+        }
+        present(editCategoryViewController, animated: true)
     }
 
     private func dismissWithCallback() {
@@ -174,7 +200,6 @@ extension CategoriesViewController: UITableViewDelegate {
                 },
                 UIAction(title: L10n.Trackers.deleteTitle, attributes: .destructive) { _ in
                     self?.viewModel?.deleteCategoryFromStore(at: indexPath)
-                    self?.callback?(nil)
                 }
             ])
         })
