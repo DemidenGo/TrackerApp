@@ -44,4 +44,8 @@ final class StatisticsService: StatisticsServiceProtocol {
     func untrack() {
         trackCount -= 1
     }
+
+    func trackerDeleted(with recordsCount: Int) {
+        trackCount -= recordsCount
+    }
 }

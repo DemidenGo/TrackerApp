@@ -14,7 +14,7 @@ protocol TrackerStoreProtocol {
     func categoryStringForTracker(at indexPath: IndexPath) -> String?
     func object(at indexPath: IndexPath) -> Tracker?
     func save(_ tracker: Tracker, in category: String, isPinned: Bool) throws
-    func deleteTracker(at indexPath: IndexPath) throws
+    func deleteTracker(at indexPath: IndexPath) throws -> Int
     func trackersFor(_ currentDate: String, searchRequest: String?)
     func completedTrackersFor(_ IDs: [String?], on currentDate: String)
     func uncompletedTrackersFor(_ IDs: [String?], on currentDate: String)

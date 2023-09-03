@@ -19,4 +19,6 @@ enum Constants {
     static let trackerCategoryCoreData = "TrackerCategoryCoreData"
     static let trackerCoreData = "TrackerCoreData"
     static let trackerRecordCoreData = "TrackerRecordCoreData"
+    // Analytics
+    //static let yandex
 }

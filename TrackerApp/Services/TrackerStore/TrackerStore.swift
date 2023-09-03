@@ -204,10 +204,13 @@ extension TrackerStore: TrackerStoreProtocol {
         try context.save()
     }
 
-    func deleteTracker(at indexPath: IndexPath) throws {
+    // Returns records count for deleted tracker
+    func deleteTracker(at indexPath: IndexPath) throws -> Int {
         let trackerCoreData = fetchedResultsController.object(at: indexPath)
+        let recordsCount = trackerCoreData.records?.count
         context.delete(trackerCoreData)
         try context.save()
+        return recordsCount ?? 0
     }
 
     func trackersFor(_ currentDate: String, searchRequest: String?) {

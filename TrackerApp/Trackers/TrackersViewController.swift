@@ -122,12 +122,14 @@ final class TrackersViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        analyticsService.report(event: "open", params: ["main_screen": "viewDidAppear"])
+        analyticsService.report(event: Analytics.Events.open,
+                                params: [Analytics.Params.Keys.mainScreen: Analytics.Params.Values.viewDidAppear])
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        analyticsService.report(event: "close", params: ["main_screen": "viewDidDisappear"])
+        analyticsService.report(event: Analytics.Events.close,
+                                params: [Analytics.Params.Keys.mainScreen: Analytics.Params.Values.viewDidDisappear])
     }
 
     private func setupViewController() {
@@ -183,7 +185,8 @@ final class TrackersViewController: UIViewController {
             self?.selectedFilter = selectedFilter
         }
         present(filtersViewController, animated: true)
-        analyticsService.report(event: "click", params: ["main_screen": "filter"])
+        analyticsService.report(event: Analytics.Events.click,
+                                params: [Analytics.Params.Keys.mainScreen: Analytics.Params.Values.filter])
     }
 
     @objc private func addNewTracker() {
@@ -194,7 +197,8 @@ final class TrackersViewController: UIViewController {
             if self?.selectedFilter != .today { self?.filterTrackers() }
         }
         present(trackerTypeViewController, animated: true)
-        analyticsService.report(event: "click", params: ["main_screen": "add_track"])
+        analyticsService.report(event: Analytics.Events.click,
+                                params: [Analytics.Params.Keys.mainScreen: Analytics.Params.Values.addTrack])
     }
 
     @objc private func dateChanged() {
@@ -279,8 +283,11 @@ final class TrackersViewController: UIViewController {
     }
 
     private func deleteTracker(at indexPath: IndexPath) {
+        delay = 0
         alertPresenter.showAlert(message: L10n.Trackers.deleteConfirmationTitle) { [weak self] in
-            try? self?.trackerStore.deleteTracker(at: indexPath)
+            let recordsCount = try? self?.trackerStore.deleteTracker(at: indexPath)
+            self?.statisticsService.trackerDeleted(with: recordsCount ?? 0)
+            self?.delay = 1
         }
     }
 
@@ -358,11 +365,13 @@ extension TrackersViewController: UICollectionViewDelegate {
                 },
                 UIAction(title: L10n.Trackers.editTitle) { _ in
                     self?.editTracker(at: indexPath)
-                    self?.analyticsService.report(event: "click", params: ["main_screen": "edit"])
+                    self?.analyticsService.report(event: Analytics.Events.click,
+                                                  params: [Analytics.Params.Keys.mainScreen: Analytics.Params.Values.edit])
                 },
                 UIAction(title: L10n.Trackers.deleteTitle, attributes: .destructive) { _ in
                     self?.deleteTracker(at: indexPath)
-                    self?.analyticsService.report(event: "click", params: ["main_screen": "delete"])
+                    self?.analyticsService.report(event: Analytics.Events.click,
+                                                  params: [Analytics.Params.Keys.mainScreen: Analytics.Params.Values.delete])
                 }
             ])
         })
@@ -427,7 +436,8 @@ extension TrackersViewController: TrackerCellDelegate {
         } else {
             saveTrackerRecord(for: cell.trackerID)
             statisticsService.track()
-            analyticsService.report(event: "click", params: ["main_screen": "track"])
+            analyticsService.report(event: Analytics.Events.click,
+                                    params: [Analytics.Params.Keys.mainScreen: Analytics.Params.Values.track])
         }
         delay = 1
     }

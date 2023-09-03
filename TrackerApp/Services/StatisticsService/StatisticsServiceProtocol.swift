@@ -12,4 +12,5 @@ protocol StatisticsServiceProtocol {
     var statisticsIsEmpty: Bool { get }
     func track()
     func untrack()
+    func trackerDeleted(with recordsCount: Int)
 }
