@@ -15,8 +15,8 @@ final class NewCategoryViewController: UIViewController {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Новая категория"
-        label.font = UIFont(name: "YSDisplay-Medium", size: 16)
+        label.text = L10n.Trackers.newCategoryTitle
+        label.font = UIFont(name: Fonts.medium, size: 16)
         label.textAlignment = .center
         return label
     }()
@@ -27,14 +27,15 @@ final class NewCategoryViewController: UIViewController {
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
         textField.backgroundColor = .backgroundColor
-        textField.placeholder = "Введите название категории"
-        textField.font = UIFont(name: "YSDisplay-Regular", size: 17)
+        textField.placeholder = L10n.Trackers.categoryNamePlaceholder
+        textField.font = UIFont(name: Fonts.regular, size: 17)
         textField.makeIndent(points: 16)
         textField.delegate = self
         textField.returnKeyType = .done
         textField.enablesReturnKeyAutomatically = true
         textField.clearButtonMode = .whileEditing
         textField.smartInsertDeleteType = .no
+        textField.text = newCategoryName
         return textField
     }()
 
@@ -42,8 +43,8 @@ final class NewCategoryViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .interfaceGray
-        button.setTitle("Готово", for: .normal)
-        button.titleLabel?.font = UIFont(name: "YSDisplay-Medium", size: 16)
+        button.setTitle(L10n.Trackers.doneTitle, for: .normal)
+        button.titleLabel?.font = UIFont(name: Fonts.medium, size: 16)
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
@@ -58,8 +59,13 @@ final class NewCategoryViewController: UIViewController {
         setupConstraints()
     }
 
+    func edit(_ category: String) {
+        newCategoryName = category
+        categoryNameTextField.becomeFirstResponder()
+    }
+
     private func setupViewController() {
-        view.backgroundColor = .white
+        view.backgroundColor = .viewBackgroundColor
         hideKeyboardByTap()
     }
 
@@ -91,12 +97,14 @@ final class NewCategoryViewController: UIViewController {
     }
 
     private func enableDoneButton() {
-        doneButton.backgroundColor = .black
+        doneButton.backgroundColor = .buttonColor
+        doneButton.setTitleColor(.viewBackgroundColor, for: .normal)
         doneButton.isUserInteractionEnabled = true
     }
 
     private func disableDoneButton() {
         doneButton.backgroundColor = .interfaceGray
+        doneButton.setTitleColor(.white, for: .normal)
         doneButton.isUserInteractionEnabled = false
     }
 }
@@ -110,7 +118,7 @@ extension NewCategoryViewController: UITextFieldDelegate {
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
-        guard textField.text != "" else {
+        guard let text = textField.text, text != "", text != L10n.Trackers.pinnedTitle.dropFirst() else {
             disableDoneButton()
             return
         }

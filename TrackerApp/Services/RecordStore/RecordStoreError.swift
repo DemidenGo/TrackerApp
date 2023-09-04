@@ -8,7 +8,7 @@
 import UIKit
 
 enum RecordStoreError: Error {
-    case requestedObjectNotFopund
+    case requestedObjectNotFound
     case decodingErrorInvalidTrackerID
     case decodingErrorInvalidDate
 }

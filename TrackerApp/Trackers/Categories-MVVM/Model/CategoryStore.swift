@@ -15,7 +15,9 @@ final class CategoryStore: NSObject {
 
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData> = {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: Constants.sortCategoriesKey, ascending: true)]
+        fetchRequest.predicate = NSPredicate(format: "%K != %@",
+                                             #keyPath(TrackerCategoryCoreData.title), L10n.Trackers.pinnedTitle)
         let controller = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                     managedObjectContext: context,
                                                     sectionNameKeyPath: nil,
@@ -93,5 +95,11 @@ extension CategoryStore: CategoryStoreProtocol {
     func objectTitle(at indexPath: IndexPath) -> String? {
         let trackerCategoryCoreData = fetchedResultsController.object(at: indexPath)
         return try? makeCategoryName(from: trackerCategoryCoreData)
+    }
+
+    func changeCategoryName(at indexPath: IndexPath, to newName: String) {
+        let categoryCoreData = fetchedResultsController.object(at: indexPath)
+        categoryCoreData.title = newName
+        try? context.save()
     }
 }

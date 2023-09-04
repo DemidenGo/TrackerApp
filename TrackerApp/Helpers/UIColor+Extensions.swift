@@ -8,11 +8,20 @@
 import UIKit
 
 extension UIColor {
-    static var interfaceBlue: UIColor { UIColor(named: "InterfaceBlue") ?? .blue }
+    static var interfaceBlue: UIColor { UIColor(named: "InterfaceBlue") ?? .systemBlue }
     static var backgroundColor: UIColor { UIColor(named: "BackgroundColor") ?? .systemGray5 }
     static var interfaceGray: UIColor { UIColor(named: "InterfaceGray") ?? .systemGray2 }
     static var interfaceLightGray: UIColor { UIColor(named: "InterfaceLightGray") ?? .systemGray4 }
-    static var buttonRed: UIColor { UIColor(named: "ButtonRed") ?? .red }
+    static var buttonRed: UIColor { UIColor(named: "ButtonRed") ?? .systemRed }
+    static var tableSeparatorColor: UIColor { UIColor(named: "TableSeparatorColor") ?? .systemGray3 }
+    static var firstGradientColor: UIColor { UIColor(named: "FirstGradientColor") ?? .systemRed }
+    static var secondGradientColor: UIColor { UIColor(named: "SecondGradientColor") ?? .systemGreen }
+    static var thirdGradientColor: UIColor { UIColor(named: "ThirdGradientColor") ?? .systemBlue }
+    static let viewBackgroundColor = UIColor.systemBackground
+    static let buttonColor = UIColor { traits in
+        if traits.userInterfaceStyle == .light { return UIColor.black }
+        return UIColor.white
+    }
 }
 
 extension Decodable where Self: UIColor {

@@ -14,4 +14,5 @@ protocol CategoryStoreProtocol {
     func deleteCategory(at indexPath: IndexPath) throws
     func setSelected(at indexPath: IndexPath) throws
     func objectTitle(at indexPath: IndexPath) -> String?
+    func changeCategoryName(at indexPath: IndexPath, to newName: String)
 }

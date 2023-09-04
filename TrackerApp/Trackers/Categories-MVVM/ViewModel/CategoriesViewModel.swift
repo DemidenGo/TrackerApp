@@ -10,18 +10,27 @@ import Foundation
 final class CategoriesViewModel {
 
     @Observable
-    private(set) var categories: [CategoryViewModel] = []
+    private(set) var categories: [CategoryViewModel]
+    @Observable
+    private var categoryForEdit: String?
+    @Observable
+    private var isNeedToShowAlert: Bool
 
-    private var categoryStore: CategoryStoreProtocol?
+    private var categoryStore: CategoryStoreProtocol
+    private var trackerStore: TrackerStoreProtocol?
+    private var categoryIndexPathToDelete: IndexPath?
 
-    init(categoryStore: CategoryStoreProtocol = CategoryStore()) {
+    init(categoryStore: CategoryStoreProtocol = CategoryStore(),
+         trackerStore: TrackerStoreProtocol? = nil) {
         self.categoryStore = categoryStore
-        self.categoryStore?.delegate = self
+        self.trackerStore = trackerStore
+        categories = []
+        isNeedToShowAlert = false
+        self.categoryStore.delegate = self
         getCategoriesFromStore()
     }
 
     private func getCategoriesFromStore() {
-        guard let categoryStore = categoryStore else { return }
         categories = categoryStore.categories.map {
             CategoryViewModel(title: $0.title ?? "",
                               isSelected: $0.isCategorySelect)
@@ -37,7 +46,7 @@ final class CategoriesViewModel {
     }
 
     private func addToStore(_ newCategory: String) {
-        try? categoryStore?.save(newCategory)
+        try? categoryStore.save(newCategory)
     }
 
     private func select(_ category: String) {
@@ -50,9 +59,9 @@ final class CategoriesViewModel {
 
 extension CategoriesViewModel: CategoriesViewModelProtocol {
 
-    var categoriesObservable: Observable<[CategoryViewModel]> {
-        $categories
-    }
+    var categoriesObservable: Observable<[CategoryViewModel]> { $categories }
+    var categoryForEditObservable: Observable<String?> { $categoryForEdit }
+    var isNeedToShowAlertObservable: Observable<Bool> { $isNeedToShowAlert }
 
     var selectedCategory: String? {
         categories.first(where: { $0.isSelected == true })?.title
@@ -64,15 +73,34 @@ extension CategoriesViewModel: CategoriesViewModelProtocol {
     }
 
     func deleteCategoryFromStore(at indexPath: IndexPath) {
-        try? categoryStore?.deleteCategory(at: indexPath)
+        isNeedToShowAlert = true
+        categoryIndexPathToDelete = indexPath
+    }
+
+    func deleteConfirmed() {
+        guard let indexPath = categoryIndexPathToDelete else { return }
+        try? categoryStore.deleteCategory(at: indexPath)
+        isNeedToShowAlert = false
+        categoryIndexPathToDelete = nil
     }
 
     func selectCategory(at indexPath: IndexPath) {
-        try? categoryStore?.setSelected(at: indexPath)
+        try? categoryStore.setSelected(at: indexPath)
     }
 
     func didCreate(_ category: String) {
         isNew(category) ? addToStore(category) : select(category)
+    }
+
+    func editCategory(at indexPath: IndexPath) {
+        categoryForEdit = categories[indexPath.row].title
+    }
+
+    func change(categoryName: String, to newCategoryName: String) {
+        guard let categoryIndex = categories.firstIndex(where: { $0.title == categoryName }) else { return }
+        let categoryIndexPath = IndexPath(row: categoryIndex, section: 0)
+        categoryStore.changeCategoryName(at: categoryIndexPath, to: newCategoryName)
+        trackerStore?.updateTrackers(in: categoryName, to: newCategoryName)
     }
 }
 

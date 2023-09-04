@@ -11,12 +11,13 @@ final class CategoriesViewController: UIViewController {
 
     var callback: ((String?) -> ())?
     var viewModel: CategoriesViewModelProtocol?
+    private var alertPresenter: AlertPresenterProtocol
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Категория"
-        label.font = UIFont(name: "YSDisplay-Medium", size: 16)
+        label.text = L10n.Trackers.categoryTitle
+        label.font = UIFont(name: Fonts.medium, size: 16)
         label.textAlignment = .center
         return label
     }()
@@ -24,15 +25,15 @@ final class CategoriesViewController: UIViewController {
     private lazy var stubImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "StarIcon")
+        imageView.image = UIImage(named: Images.Trackers.emptyState)
         return imageView
     }()
 
     private lazy var stubLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Привычки и события можно\nобъединить по смыслу"
-        label.font = UIFont(name: "YSDisplay-Medium", size: 12)
+        label.text = L10n.Trackers.emptyCategoriesTitle
+        label.font = UIFont(name: Fonts.medium, size: 12)
         label.numberOfLines = 2
         label.textAlignment = .center
         return label
@@ -41,10 +42,10 @@ final class CategoriesViewController: UIViewController {
     private lazy var addCategoryButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .black
-        button.setTitle("Добавить категорию", for: .normal)
-        button.titleLabel?.font = UIFont(name: "YSDisplay-Medium", size: 16)
-        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = .buttonColor
+        button.setTitle(L10n.Trackers.addCategoryTitle, for: .normal)
+        button.titleLabel?.font = UIFont(name: Fonts.medium, size: 16)
+        button.setTitleColor(.viewBackgroundColor, for: .normal)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(addCategoryButtonAction), for: .touchUpInside)
@@ -56,6 +57,7 @@ final class CategoriesViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
+        tableView.separatorColor = .tableSeparatorColor
         tableView.register(ButtonTableCell.self, forCellReuseIdentifier: ButtonTableCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
@@ -64,7 +66,7 @@ final class CategoriesViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .viewBackgroundColor
         setupConstraints()
         bind()
     }
@@ -81,9 +83,12 @@ final class CategoriesViewController: UIViewController {
         categoriesTableView.scrollToRow(at: viewModel.selectedCategoryIndexPath, at: .bottom, animated: true)
     }
 
-    init(viewModel: CategoriesViewModelProtocol) {
-        super.init(nibName: nil, bundle: nil)
+    init(viewModel: CategoriesViewModelProtocol,
+         alertPresenter: AlertPresenterProtocol = AlertPresenter()) {
         self.viewModel = viewModel
+        self.alertPresenter = alertPresenter
+        super.init(nibName: nil, bundle: nil)
+        self.alertPresenter.viewController = self
     }
 
     required init?(coder: NSCoder) {
@@ -95,7 +100,18 @@ final class CategoriesViewController: UIViewController {
         viewModel.categoriesObservable.bind { [weak self] _ in
             self?.categoriesTableView.isHidden = viewModel.categories.isEmpty
             self?.categoriesTableView.reloadData()
-            self?.dismissWithCallback()
+        }
+        viewModel.categoryForEditObservable.bind { [weak self] category in
+            guard let category = category else { return }
+            self?.edit(category)
+        }
+        viewModel.isNeedToShowAlertObservable.bind { [weak self] isNeed in
+            if isNeed {
+                self?.alertPresenter.showAlert(message: L10n.Trackers.deleteCategoryConfirmationTitle) { [weak self] in
+                    self?.viewModel?.deleteConfirmed()
+                    self?.callback?(nil)
+                }
+            }
         }
     }
 
@@ -107,6 +123,16 @@ final class CategoriesViewController: UIViewController {
             self?.viewModel?.didCreate(category)
         }
         present(newCategoryViewController, animated: true)
+    }
+
+    private func edit(_ category: String) {
+        let editCategoryViewController = NewCategoryViewController()
+        editCategoryViewController.edit(category)
+        editCategoryViewController.callback = { [weak self] newCategory in
+            guard let newCategory = newCategory else { return }
+            self?.viewModel?.change(categoryName: category, to: newCategory)
+        }
+        present(editCategoryViewController, animated: true)
     }
 
     private func dismissWithCallback() {
@@ -164,6 +190,19 @@ extension CategoriesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         viewModel?.selectCategory(at: indexPath)
         dismissWithCallback()
+    }
+
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(actionProvider: { [weak self] actions in
+            return UIMenu(children: [
+                UIAction(title: L10n.Trackers.editTitle) { _ in
+                    self?.viewModel?.editCategory(at: indexPath)
+                },
+                UIAction(title: L10n.Trackers.deleteTitle, attributes: .destructive) { _ in
+                    self?.viewModel?.deleteCategoryFromStore(at: indexPath)
+                }
+            ])
+        })
     }
 }
 

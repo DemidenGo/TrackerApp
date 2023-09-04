@@ -1,0 +1,68 @@
+/* 
+  Localizable.strings
+  TrackerApp
+
+  Created by Юрий Демиденко on 26.06.2023.
+  
+*/
+
+firstOnboardingMessage = "Track only what you want";
+secondOnboardingMessage = "Even if it's not liters of water and yoga";
+loginTitle = "These are technologies!";
+trackersTitle = "Trackers";
+statisticsTitle = "Statistics";
+searchTitle = "Search";
+stubTitle = "What will you track?";
+nothingFoundTitle = "Nothing found";
+trackerCreationTitle = "Creating tracker";
+regularTrackerTitle = "Regular event";
+irregularTrackerTitle = "Irregular event";
+newRegularTrackerTitle = "New regular tracker";
+newIrregularTrackerTitle = "New irregular tracker";
+editTrackerTitle = "Tracker editing";
+trackerNamePlaceholder = "Enter tracker name";
+emojiTitle = "Emoji";
+colorTitle = "Color";
+cancelTitle = "Cancel";
+createTitle = "Create";
+charLimitTitle = "Limit of 38 characters";
+categoryTitle = "Category";
+scheduleTitle = "Schedule";
+emptyCategoriesTitle = "Habits and events can be\ncombined in meaning";
+addCategoryTitle = "Add category";
+newCategoryTitle = "New category";
+categoryNamePlaceholder = "Enter category name";
+doneTitle = "Done";
+mondayTitle = "monday";
+tuesdayTitle = "tuesday";
+wednesdayTitle = "wednesday";
+thursdayTitle = "thursday";
+fridayTitle = "friday";
+saturdayTitle = "saturday";
+sundayTitle = "sunday";
+mondayShortTitle = "Mo";
+tuesdayShortTitle = "Tu";
+wednesdayShortTitle = "We";
+thursdayShortTitle = "Th";
+fridayShortTitle = "Fr";
+saturdayShortTitle = "Sa";
+sundayShortTitle = "Su";
+everyDayTitle = "Every day";
+pinTitle = "Pin";
+unpinTitle = "Unpin";
+editTitle = "Edit";
+deleteTitle = "Delete";
+saveTitle = "Save";
+deleteConfirmationTitle = "Are you sure you want to delete tracker?";
+deleteCategoryConfirmationTitle = "Is this category definitely not needed?";
+pinnedTitle = "\U2009Pinned";
+filtersTitle = "Filters";
+allTrackersTitle = "All trackers";
+todayTrackersTitle = "Trackers for today";
+completedTrackersTitle = "Completed";
+uncompletedTrackersTitle = "Uncompleted";
+bestPeriodTitle = "Best period";
+perfectDaysTitle = "Perfect days";
+trackersCompletedTitle = "Trackers completed";
+averageValueTitle = "Average value";
+nothingAnalyzeTitle = "There is nothing to analyze yet";

@@ -42,20 +42,20 @@ enum OnboardingPage: CaseIterable {
     var onboardingMessage: String {
         switch self {
         case .first:
-            return "Отслеживайте только то, что хотите"
+            return L10n.Onboarding.firstMessage
         case .second:
-            return "Даже если это не литры воды и йога"
+            return L10n.Onboarding.secondMessage
         }
     }
 
     var backgroundImage: String {
         switch self {
         case .first:
-            return "Onboarding-Background-1"
+            return Images.Onboarding.firstPage
         case .second:
-            return "Onboarding-Background-2"
+            return Images.Onboarding.secondPage
         }
     }
 
-    var loginButtonTitle: String { "Вот это технологии!" }
+    var loginButtonTitle: String { L10n.Onboarding.loginButtonTitle }
 }

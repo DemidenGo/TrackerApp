@@ -8,5 +8,10 @@
 import UIKit
 
 protocol TrackerStoreDelegate: AnyObject {
-    func didUpdateTracker(_ insertedSections: IndexSet, _ deletedSections: IndexSet, _ updatedIndexPaths: [IndexPath], _ insertedIndexPaths: [IndexPath], _ deletedIndexPaths: [IndexPath])
+    func didUpdateTracker(_ insertedSections: IndexSet,
+                          _ deletedSections: IndexSet,
+                          _ updatedSections: IndexSet,
+                          _ updatedIndexPaths: [IndexPath],
+                          _ insertedIndexPaths: [IndexPath],
+                          _ deletedIndexPaths: [IndexPath])
 }

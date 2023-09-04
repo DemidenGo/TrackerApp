@@ -1,0 +1,68 @@
+/* 
+  Localizable.strings
+  TrackerApp
+
+  Created by Юрий Демиденко on 26.06.2023.
+  
+*/
+
+firstOnboardingMessage = "Отслеживайте только то, что хотите";
+secondOnboardingMessage = "Даже если это не литры воды и йога";
+loginTitle = "Вот это технологии!";
+trackersTitle = "Трекеры";
+statisticsTitle = "Статистика";
+searchTitle = "Поиск";
+stubTitle = "Что будем отслеживать?";
+nothingFoundTitle = "Ничего не найдено";
+trackerCreationTitle = "Создание трекера";
+regularTrackerTitle = "Привычка";
+irregularTrackerTitle = "Нерегулярное событие";
+newRegularTrackerTitle = "Новая привычка";
+newIrregularTrackerTitle = "Новое нерегулярное событие";
+editTrackerTitle = "Редактирование привычки";
+trackerNamePlaceholder = "Введите название трекера";
+emojiTitle = "Emoji";
+colorTitle = "Цвет";
+cancelTitle = "Отменить";
+createTitle = "Создать";
+charLimitTitle = "Ограничение 38 символов";
+categoryTitle = "Категория";
+scheduleTitle = "Расписание";
+emptyCategoriesTitle = "Привычки и события можно\nобъединить по смыслу";
+addCategoryTitle = "Добавить категорию";
+newCategoryTitle = "Новая категория";
+categoryNamePlaceholder = "Введите название категории";
+doneTitle = "Готово";
+mondayTitle = "понедельник";
+tuesdayTitle = "вторник";
+wednesdayTitle = "среда";
+thursdayTitle = "четверг";
+fridayTitle = "пятница";
+saturdayTitle = "суббота";
+sundayTitle = "воскресенье";
+mondayShortTitle = "Пн";
+tuesdayShortTitle = "Вт";
+wednesdayShortTitle = "Ср";
+thursdayShortTitle = "Чт";
+fridayShortTitle = "Пт";
+saturdayShortTitle = "Сб";
+sundayShortTitle = "Вс";
+everyDayTitle = "Каждый день";
+pinTitle = "Закрепить";
+unpinTitle = "Открепить";
+editTitle = "Редактировать";
+deleteTitle = "Удалить";
+saveTitle = "Сохранить";
+deleteConfirmationTitle = "Уверены что хотите удалить трекер?";
+deleteCategoryConfirmationTitle = "Эта категория точно не нужна?";
+pinnedTitle = "\U2009Закрепленные";
+filtersTitle = "Фильтры";
+allTrackersTitle = "Все трекеры";
+todayTrackersTitle = "Трекеры на сегодня";
+completedTrackersTitle = "Завершенные";
+uncompletedTrackersTitle = "Незавершенные";
+bestPeriodTitle = "Лучший период";
+perfectDaysTitle = "Идеальные дни";
+trackersCompletedTitle = "Трекеров завершено";
+averageValueTitle = "Среднее значение";
+nothingAnalyzeTitle = "Анализировать пока нечего";

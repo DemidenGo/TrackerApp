@@ -22,24 +22,24 @@ final class TabBarController: UITabBarController {
     }
 
     private func setTabBarItems(_ trackersVC: UIViewController, _ statisticsVC: UIViewController) {
-        trackersVC.tabBarItem = UITabBarItem(title: "Трекеры",
-                                             image: UIImage(named: "TrackersTabBarItem"),
-                                             selectedImage: UIImage(named: "TrackersTabBarItemSelected"))
+        trackersVC.tabBarItem = UITabBarItem(title: L10n.Trackers.trackersTitle,
+                                             image: UIImage(named: Images.TabBar.firstItem),
+                                             selectedImage: UIImage(named: Images.TabBar.firstItemSelected))
         trackersVC.tabBarItem.setTitleTextAttributes(
-            [NSAttributedString.Key.font: UIFont(name: "YSDisplay-Medium", size: 10) ?? .systemFont(ofSize: 10),
+            [NSAttributedString.Key.font: UIFont(name: Fonts.medium, size: 10) ?? .systemFont(ofSize: 10),
              NSAttributedString.Key.foregroundColor: UIColor.interfaceGray], for: .normal)
         trackersVC.tabBarItem.setTitleTextAttributes(
-            [NSAttributedString.Key.font: UIFont(name: "YSDisplay-Medium", size: 10) ?? .systemFont(ofSize: 10),
+            [NSAttributedString.Key.font: UIFont(name: Fonts.medium, size: 10) ?? .systemFont(ofSize: 10),
              NSAttributedString.Key.foregroundColor: UIColor.interfaceBlue], for: .selected)
 
-        statisticsVC.tabBarItem = UITabBarItem(title: "Статистика",
-                                               image: UIImage(named: "StatisticsTabBarItem"),
-                                               selectedImage: UIImage(named: "StatisticsTabBarItemSelected"))
+        statisticsVC.tabBarItem = UITabBarItem(title: L10n.Trackers.statisticsTitle,
+                                               image: UIImage(named: Images.TabBar.secondItem),
+                                               selectedImage: UIImage(named: Images.TabBar.secondItemSelected))
         statisticsVC.tabBarItem.setTitleTextAttributes(
-            [NSAttributedString.Key.font: UIFont(name: "YSDisplay-Medium", size: 10) ?? .systemFont(ofSize: 10),
+            [NSAttributedString.Key.font: UIFont(name: Fonts.medium, size: 10) ?? .systemFont(ofSize: 10),
              NSAttributedString.Key.foregroundColor: UIColor.interfaceGray], for: .normal)
         statisticsVC.tabBarItem.setTitleTextAttributes(
-            [NSAttributedString.Key.font: UIFont(name: "YSDisplay-Medium", size: 10) ?? .systemFont(ofSize: 10),
+            [NSAttributedString.Key.font: UIFont(name: Fonts.medium, size: 10) ?? .systemFont(ofSize: 10),
              NSAttributedString.Key.foregroundColor: UIColor.interfaceBlue], for: .selected)
     }
 }

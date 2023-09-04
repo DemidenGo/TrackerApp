@@ -12,11 +12,31 @@ final class ScheduleViewController: UIViewController {
     var callback: ((Set<WeekDay>) -> ())?
     private lazy var selectedSchedule: Set<WeekDay> = Set<WeekDay>()
 
+    private var doneButtonIndent: CGFloat {
+        guard let window = UIApplication.shared.windows.first else {
+            preconditionFailure("Error: unable to get key window")
+        }
+        let safeAreaInsets = window.safeAreaInsets.top + window.safeAreaInsets.bottom
+        return UIScreen.main.bounds.height <= 760 ? 24 : UIScreen.main.bounds.height - safeAreaInsets - 690
+    }
+
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+
+    private lazy var contentView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Расписание"
-        label.font = UIFont(name: "YSDisplay-Medium", size: 16)
+        label.text = L10n.Trackers.scheduleTitle
+        label.font = UIFont(name: Fonts.medium, size: 16)
         label.textAlignment = .center
         return label
     }()
@@ -36,10 +56,10 @@ final class ScheduleViewController: UIViewController {
     private lazy var doneButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .black
-        button.setTitle("Готово", for: .normal)
-        button.titleLabel?.font = UIFont(name: "YSDisplay-Medium", size: 16)
-        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = .buttonColor
+        button.setTitle(L10n.Trackers.doneTitle, for: .normal)
+        button.titleLabel?.font = UIFont(name: Fonts.medium, size: 16)
+        button.setTitleColor(.viewBackgroundColor, for: .normal)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(doneButtonAction), for: .touchUpInside)
@@ -48,7 +68,7 @@ final class ScheduleViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .viewBackgroundColor
         setupConstraints()
     }
 
@@ -72,19 +92,33 @@ final class ScheduleViewController: UIViewController {
     }
 
     private func setupConstraints() {
-        [titleLabel, scheduleTableView, doneButton].forEach { view.addSubview($0) }
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        [titleLabel, scheduleTableView, doneButton].forEach { contentView.addSubview($0) }
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
-            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+
+            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 27),
+            titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
 
             scheduleTableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 30),
-            scheduleTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            scheduleTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            scheduleTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            scheduleTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             scheduleTableView.heightAnchor.constraint(equalToConstant: 7 * 75),
 
-            doneButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
-            doneButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            doneButton.topAnchor.constraint(equalTo: scheduleTableView.bottomAnchor, constant: doneButtonIndent),
+            doneButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            doneButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+            doneButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             doneButton.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
@@ -112,7 +146,8 @@ extension ScheduleViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ButtonTableCell.identifier) as? ButtonTableCell else { return UITableViewCell() }
-        cell.set(label: WeekDay.allCases[indexPath.row].rawValue.capitalized)
+        let weekDay = WeekDay.allCases[indexPath.row]
+        cell.set(label: weekDay.localizedString.capitalized)
         if indexPath.row == WeekDay.allCases.count - 1 {
             cell.separatorInset = .init(top: 0, left: UIScreen.main.bounds.width, bottom: 0, right: 0)
         }

@@ -10,29 +10,31 @@ import UIKit
 enum TrackerType {
     case regular
     case irregular
+    case existing
 }
 
 final class TrackerTypeViewController: UIViewController {
 
     var trackerStore: TrackerStoreProtocol?
+    var updateTrackersCompletion: (() -> Void)?
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Создание трекера"
-        label.font = UIFont(name: "YSDisplay-Medium", size: 16)
+        label.text = L10n.Trackers.trackerCreationTitle
+        label.font = UIFont(name: Fonts.medium, size: 16)
         label.textAlignment = .center
         return label
     }()
 
     private lazy var regularEventButton: UIButton = {
-        let button = makeButton(title: "Привычка")
+        let button = makeButton(title: L10n.Trackers.regularTrackerTitle)
         button.addTarget(self, action: #selector(addRegularTracker), for: .touchUpInside)
         return button
     }()
 
     private lazy var irregularEventButton: UIButton = {
-        let button = makeButton(title: "Нерегулярное событие")
+        let button = makeButton(title: L10n.Trackers.irregularTrackerTitle)
         button.addTarget(self, action: #selector(addIrregularTracker), for: .touchUpInside)
         return button
     }()
@@ -49,19 +51,19 @@ final class TrackerTypeViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .viewBackgroundColor
         setupConstraints()
     }
 
     private func makeButton(title: String) -> UIButton {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .black
+        button.backgroundColor = .buttonColor
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.setTitle(title, for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = UIFont(name: "YSDisplay-Medium", size: 16)
+        button.setTitleColor(.viewBackgroundColor, for: .normal)
+        button.titleLabel?.font = UIFont(name: Fonts.medium, size: 16)
         return button
     }
 
@@ -74,10 +76,12 @@ final class TrackerTypeViewController: UIViewController {
     }
 
     private func presentViewController(newTracker type: TrackerType) {
-        let viewController = TrackerCreationViewController()
-        viewController.trackerType = type
+        let viewController = TrackerCreationViewController(trackerType: type)
         viewController.trackerStore = trackerStore
-        viewController.callback = { [weak self] in self?.dismiss(animated: true) }
+        viewController.completion = { [weak self] in
+            self?.dismiss(animated: true)
+            self?.updateTrackersCompletion?()
+        }
         present(viewController, animated: true)
     }
 
@@ -93,5 +97,14 @@ final class TrackerTypeViewController: UIViewController {
             stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             stackView.heightAnchor.constraint(equalToConstant: 136)
         ])
+    }
+}
+
+// MARK: - UIAdaptivePresentationControllerDelegate
+
+extension TrackerTypeViewController: UIAdaptivePresentationControllerDelegate {
+
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        updateTrackersCompletion?()
     }
 }

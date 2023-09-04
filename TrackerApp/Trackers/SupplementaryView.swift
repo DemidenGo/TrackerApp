@@ -12,7 +12,7 @@ final class SupplementaryView: UICollectionReusableView {
     private lazy var sectionTitle: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "YSDisplay-Bold", size: 19)
+        label.font = UIFont(name: Fonts.bold, size: 19)
         return label
     }()
 
@@ -29,7 +29,7 @@ final class SupplementaryView: UICollectionReusableView {
         addSubview(sectionTitle)
         NSLayoutConstraint.activate([
             sectionTitle.topAnchor.constraint(equalTo: topAnchor),
-            sectionTitle.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+            sectionTitle.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 28),
             sectionTitle.heightAnchor.constraint(equalToConstant: 20)
         ])
     }
