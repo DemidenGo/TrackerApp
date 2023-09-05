@@ -1,5 +1,8 @@
 # TrackerApp
 
+Приложение помогает пользователям формировать полезные привычки и контролировать их выполнение. При разработке приложения изучался фреймворк CoreData и архитектурный паттерн MVVM (приложение частично отрефакторено с MVC на MVVM).  
+**Основные технологии:** MVC, MVVM (без combine и React-фреймворков), propertyWrapper, UIKit, Autolayout, CoreData, NSFetchedResultsController, NSPredicate, NSSortDescriptor, ObservableWrapper, BatchUpdates, YandexMobileMetrica, Swift Package Manager (SPM), CocoaPods, SnapshotTesting, Color Marshalling.
+
 ![AppScreenshot1](AppScreenshots/1.png) ![AppScreenshot2](AppScreenshots/2.png) ![AppScreenshot3](AppScreenshots/3.png) ![AppScreenshot4](AppScreenshots/4.png)
 
 # ТЗ мобильного приложения для трекинга привычек
@@ -8,11 +11,7 @@
 
 [Дизайн Figma](https://www.figma.com/file/owAO4CAPTJdpM1BZU5JHv7/Tracker-(YP)?t=SZDLmkWeOPX4y6mp-0)
 
-# Назначение и цели приложения
-
-Приложение помогает пользователям формировать полезные привычки и контролировать их выполнение.
-
-Цели приложения:
+# Цели приложения
 
 - Контроль привычек по дням недели;
 - Просмотр прогресса по привычкам;
